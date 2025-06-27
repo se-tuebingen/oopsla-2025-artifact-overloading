@@ -1,0 +1,19 @@
+// Example: Section 2.2
+assume readInt: String => Int;
+assume readDouble: String => Double;
+
+assume showInt: Int => String;
+assume showDouble: Double => String;
+assume showString: String => String;
+
+// In "surface language": `λ str => show(read(str))`
+λ(str) =>
+  let read = a<readInt, readDouble>;
+  let value = read(str);
+  let show = b<showInt, showDouble, showString>;
+  show(value)
+
+// Two possible overloads (worlds):
+// 1. a = 1 (readInt) & b = 1 (showInt)
+// 2. a = 2 (readDouble) & b = 2 (showDouble)
+// No other combinations are valid.

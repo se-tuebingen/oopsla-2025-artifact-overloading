@@ -1,0 +1,379 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/sec-4-3-1.over
+---
+{
+  "status": "success",
+  "expression": "assume addInt: (Int, Int) => Int\nassume addDouble: (Double, Double) => Double\nassume printInt: (Int) => Unit\nassume printString: (String) => Unit\nlet add1 = a‹addInt, addDouble›\nlet print1 = b‹printInt, printString›\nlet add2 = c‹addInt, addDouble›\nlet print2 = d‹printInt, printString›\nlet _r1 = print1(add1(1, 2))\nprint2(add2(3, 4))",
+  "inferred_type": "app_7",
+  "worlds": {
+    "type": "one"
+  },
+  "solutions": [
+    [
+      "a₁",
+      "b₁",
+      "c₁",
+      "d₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "(Int) => Unit",
+      "choices": [
+        "b₁"
+      ],
+      "to": "over_b_1"
+    },
+    {
+      "from": "(String) => Unit",
+      "choices": [
+        "b₂"
+      ],
+      "to": "over_b_1"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "c₁"
+      ],
+      "to": "over_c_2"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "c₂"
+      ],
+      "to": "over_c_2"
+    },
+    {
+      "from": "(Int) => Unit",
+      "choices": [
+        "d₁"
+      ],
+      "to": "over_d_3"
+    },
+    {
+      "from": "(String) => Unit",
+      "choices": [
+        "d₂"
+      ],
+      "to": "over_d_3"
+    },
+    {
+      "from": "over_a_0",
+      "choices": [],
+      "to": "(Int, Int) => app_4"
+    },
+    {
+      "from": "over_b_1",
+      "choices": [],
+      "to": "(app_4) => app_5"
+    },
+    {
+      "from": "over_c_2",
+      "choices": [],
+      "to": "(Int, Int) => app_6"
+    },
+    {
+      "from": "over_d_3",
+      "choices": [],
+      "to": "(app_6) => app_7"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "app_4",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_5",
+      "lower": [
+        {
+          "type_name": "Unit",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "Unit",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "app_6",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "c₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "c₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "d₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "d₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_7",
+      "lower": [
+        {
+          "type_name": "Unit",
+          "choices": [
+            "d₁"
+          ]
+        },
+        {
+          "type_name": "Unit",
+          "choices": [
+            "d₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "over_a_0",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int, Int) => app_4",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_b_1",
+      "lower": [
+        {
+          "type_name": "(Int) => Unit",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "(String) => Unit",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_4) => app_5",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_c_2",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "c₂"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "c₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int, Int) => app_6",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_d_3",
+      "lower": [
+        {
+          "type_name": "(Int) => Unit",
+          "choices": [
+            "d₁"
+          ]
+        },
+        {
+          "type_name": "(String) => Unit",
+          "choices": [
+            "d₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_6) => app_7",
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a₂",
+          "b₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a₂",
+          "b₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "c₂",
+          "d₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "c₂",
+          "d₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₁",
+          "b₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "c₁",
+          "d₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "c₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    }
+  ]
+}

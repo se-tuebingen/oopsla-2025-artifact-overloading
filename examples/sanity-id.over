@@ -1,0 +1,6 @@
+assume idPoly: ∀(T). (T) => T;
+assume idInt: (Int) => Int;
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+
+λ(x) => b<addInt, addString>(x, a<idPoly,idInt>(42))

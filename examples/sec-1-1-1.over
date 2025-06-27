@@ -1,0 +1,14 @@
+// Example: Section 1.1.1
+
+// Assume the existence of `addInt` and `addString`
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+
+// The program itself starts here:
+// `1 + 2` in the "surface language" of the paper
+// is the following in Variational Core (the language of this artifact)
+
+let f = a<addInt, addString>; // note: `let` is _not_ generalized
+f(1, 2)
+
+// Only one valid overload (world): a = 1 (addInt)

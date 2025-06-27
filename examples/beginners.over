@@ -1,0 +1,9 @@
+assume curryIntString: (Int) => ((String) => Int);
+assume curryIntInt: (Int) => ((Int) => Int);
+
+let f = a<curryIntString, curryIntInt>(5);
+f(50)
+// Beware that `f` is not polymorphic in its choice.
+// Try replacing `f(50)` with:
+// `let _ = f(50) in f("hello")`
+// and you'll see that the overload resolution fails!

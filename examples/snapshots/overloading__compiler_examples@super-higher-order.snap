@@ -1,0 +1,171 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/super-higher-order.over
+---
+{
+  "status": "success",
+  "expression": "let defaultInt = 0\nlet defaultString = \"\"\nλ f => let id = λ x => x => x\nlet default = a‹defaultInt, defaultString›\nlet apply = b‹f, id›\napply(default) => \n  let id = λ x => x => x\n  let default = a‹defaultInt, defaultString›\n  let apply = b‹f, id›\n  apply(default)",
+  "inferred_type": "(f_0) => app_4",
+  "worlds": {
+    "type": "many",
+    "count": 4.0
+  },
+  "solutions": [
+    [
+      "a₂",
+      "b₂"
+    ],
+    [
+      "a₂",
+      "b₁"
+    ],
+    [
+      "a₁",
+      "b₂"
+    ],
+    [
+      "a₁",
+      "b₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_2"
+    },
+    {
+      "from": "String",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_2"
+    },
+    {
+      "from": "f_0",
+      "choices": [
+        "b₁"
+      ],
+      "to": "over_b_3"
+    },
+    {
+      "from": "(x_1) => x_1",
+      "choices": [
+        "b₂"
+      ],
+      "to": "over_b_3"
+    },
+    {
+      "from": "over_b_3",
+      "choices": [],
+      "to": "(over_a_2) => app_4"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "app_4",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁",
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂",
+            "b₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "f_0",
+      "lower": [],
+      "upper": [
+        {
+          "type_name": "over_b_3",
+          "choices": [
+            "b₁"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "over_a_2",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "x_1",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "over_b_3",
+      "lower": [
+        {
+          "type_name": "(x_1) => x_1",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(over_a_2) => app_4",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "x_1",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁",
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂",
+            "b₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "app_4",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,10 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/nested-badly.over
+---
+{
+  "status": "error",
+  "expression": "a‹a‹0, \"\"››",
+  "error": "Failed to gather choices: Duplicate choice variable 'a' with different arities: 1 and 2"
+}

@@ -1,0 +1,9 @@
+// Higher-order example
+let defaultInt = 0;
+let defaultString = "";
+
+λ(f) =>
+  let id = λ(x) => x;
+  let default = a<defaultInt, defaultString>;
+  let apply = b<f, id>;
+  apply(default)

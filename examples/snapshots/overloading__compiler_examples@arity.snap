@@ -1,0 +1,245 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/arity.over
+---
+{
+  "status": "success",
+  "expression": "assume add1: (Int) => Int\nassume add2: (Int, Int) => Int\nassume add3: (Int, Int, Int) => Int\nassume add4: (Int, Int, Int, Int) => Int\nlet add_a = a‹add1, add2, add3, add4›\nlet _ = add_a(1, 2, 3)\nlet add_b = b‹add1, add2, add3, add4›\nadd_b(4, 5)",
+  "inferred_type": "app_3",
+  "worlds": {
+    "type": "one"
+  },
+  "solutions": [
+    [
+      "a₃",
+      "b₂"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "(Int) => Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "(Int, Int, Int) => Int",
+      "choices": [
+        "a₃"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "(Int, Int, Int, Int) => Int",
+      "choices": [
+        "a₄"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "over_a_0",
+      "choices": [],
+      "to": "(Int, Int, Int) => app_1"
+    },
+    {
+      "from": "(Int) => Int",
+      "choices": [
+        "b₁"
+      ],
+      "to": "over_b_2"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "b₂"
+      ],
+      "to": "over_b_2"
+    },
+    {
+      "from": "(Int, Int, Int) => Int",
+      "choices": [
+        "b₃"
+      ],
+      "to": "over_b_2"
+    },
+    {
+      "from": "(Int, Int, Int, Int) => Int",
+      "choices": [
+        "b₄"
+      ],
+      "to": "over_b_2"
+    },
+    {
+      "from": "over_b_2",
+      "choices": [],
+      "to": "(Int, Int) => app_3"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "app_1",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₃"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "app_3",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "over_a_0",
+      "lower": [
+        {
+          "type_name": "(Int) => Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "(Int, Int, Int) => Int",
+          "choices": [
+            "a₃"
+          ]
+        },
+        {
+          "type_name": "(Int, Int, Int, Int) => Int",
+          "choices": [
+            "a₄"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int, Int, Int) => app_1",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_b_2",
+      "lower": [
+        {
+          "type_name": "(Int) => Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "(Int, Int, Int) => Int",
+          "choices": [
+            "b₃"
+          ]
+        },
+        {
+          "type_name": "(Int, Int, Int, Int) => Int",
+          "choices": [
+            "b₄"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int, Int) => app_3",
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "(Int) => Int",
+        "choices": [
+          "a₁"
+        ],
+        "to": "(Int, Int, Int) => app_1"
+      },
+      "message": "Wrong arity"
+    },
+    {
+      "constraint": {
+        "from": "(Int) => Int",
+        "choices": [
+          "b₁"
+        ],
+        "to": "(Int, Int) => app_3"
+      },
+      "message": "Wrong arity"
+    },
+    {
+      "constraint": {
+        "from": "(Int, Int) => Int",
+        "choices": [
+          "a₂"
+        ],
+        "to": "(Int, Int, Int) => app_1"
+      },
+      "message": "Wrong arity"
+    },
+    {
+      "constraint": {
+        "from": "(Int, Int, Int) => Int",
+        "choices": [
+          "b₃"
+        ],
+        "to": "(Int, Int) => app_3"
+      },
+      "message": "Wrong arity"
+    },
+    {
+      "constraint": {
+        "from": "(Int, Int, Int, Int) => Int",
+        "choices": [
+          "a₄"
+        ],
+        "to": "(Int, Int, Int) => app_1"
+      },
+      "message": "Wrong arity"
+    },
+    {
+      "constraint": {
+        "from": "(Int, Int, Int, Int) => Int",
+        "choices": [
+          "b₄"
+        ],
+        "to": "(Int, Int) => app_3"
+      },
+      "message": "Wrong arity"
+    }
+  ]
+}

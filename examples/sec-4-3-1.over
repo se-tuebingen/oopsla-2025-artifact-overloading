@@ -1,0 +1,18 @@
+// Example: Section 4.3.1
+assume addInt: (Int, Int) => Int;
+assume addDouble: (Double, Double) => Double;
+
+assume printInt: Int => Unit;
+assume printString: String => Unit;
+
+// Notice that the dimensions are in two "clusters"
+// that could be resolved independently:
+// - `a` and `b` (from `add1` and `print1`)
+// - `c` and `d` (from `add2` and `print2`)
+let add1 = a<addInt, addDouble>;
+let print1 = b<printInt, printString>;
+let add2 = c<addInt, addDouble>;
+let print2 = d<printInt, printString>;
+
+let _r1 = print1(add1(1, 2));
+print2(add2(3, 4))

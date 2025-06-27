@@ -1,0 +1,20 @@
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+assume addDouble: (Double, Double) => Double;
+
+// λx => x + x + x + ...
+λ(x) =>
+  a1<addDouble,addInt,addString>(
+    a2<addDouble,addInt,addString>(
+      a3<addDouble,addInt,addString>(
+        a4<addDouble,addInt,addString>(
+          a5<addDouble,addInt,addString>(
+            a6<addDouble,addInt,addString>(
+              a7<addDouble,addInt,addString>(
+                a8<addDouble,addInt,addString>(
+                  a9<addDouble,addInt,addString>(
+                    a10<addDouble,addInt,addString>(
+                      a11<addDouble,addInt,addString>(
+                        a12<addDouble,addInt,addString>(
+                          a13<addDouble,addInt,addString>(
+                            x, x), x), x), x), x), x), x), x), x), x), x), x), x)

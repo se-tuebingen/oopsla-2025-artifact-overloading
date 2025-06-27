@@ -1,0 +1,9 @@
+// Example: Section 2.1, but same dimension `a` everywhere!
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+
+λ(x) =>
+  let add_b = a<addInt, addString>;
+  let inner = add_b(x, x);
+  let add_a = a<addInt, addString>;
+  add_a(0, inner)

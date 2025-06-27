@@ -1,0 +1,94 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/sec-1-1-1.over
+---
+{
+  "status": "success",
+  "expression": "assume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nlet f = a‹addInt, addString›\nf(1, 2)",
+  "inferred_type": "app_1",
+  "worlds": {
+    "type": "one"
+  },
+  "solutions": [
+    [
+      "a₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "over_a_0",
+      "choices": [],
+      "to": "(Int, Int) => app_1"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "app_1",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "over_a_0",
+      "lower": [
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int, Int) => app_1",
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/sec-2-4-1-A.over
+---
+{
+  "status": "success",
+  "expression": "assume addInt: (Int, Int) => Int\nlet invalid = addInt(\"\", 0)\nlet exampleA = a‹invalid, 42›\nexampleA",
+  "inferred_type": "over_a_1",
+  "worlds": {
+    "type": "no"
+  },
+  "constraints": [
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [],
+      "to": "(String, Int) => app_0"
+    },
+    {
+      "from": "app_0",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_1"
+    },
+    {
+      "from": "Int",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_1"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "app_0",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "over_a_1",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "over_a_1",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": []
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    }
+  ]
+}

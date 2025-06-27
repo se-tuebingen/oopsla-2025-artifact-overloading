@@ -1,0 +1,9 @@
+// Example B: Section 2.4.1
+// (compare with example B of the same section)
+assume addInt: (Int, Int) => Int;
+
+// The invalid call lives inside of worlds where a = 1
+let exampleB = a<addInt("", 0), 42>;
+exampleB
+
+// so we can reject that world and choose the one where a = 2!

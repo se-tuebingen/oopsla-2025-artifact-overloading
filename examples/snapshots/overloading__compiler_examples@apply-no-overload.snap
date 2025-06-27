@@ -1,0 +1,101 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/apply-no-overload.over
+---
+{
+  "status": "success",
+  "expression": "assume apply: ∀(A, B ). ((A) => B) => (A) => B\nlet double = λ x => x => x\napply(double)(42)",
+  "inferred_type": "app_4",
+  "worlds": {
+    "type": "one"
+  },
+  "solutions": [
+    []
+  ],
+  "constraints": [
+    {
+      "from": "((A_1) => B_2) => (A_1) => B_2",
+      "choices": [],
+      "to": "((x_0) => x_0) => app_3"
+    },
+    {
+      "from": "app_3",
+      "choices": [],
+      "to": "(Int) => app_4"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "A_1",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "x_0",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "B_2",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "app_4",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "app_3",
+      "lower": [
+        {
+          "type_name": "(A_1) => B_2",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int) => app_4",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "app_4",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": []
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "x_0",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "B_2",
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

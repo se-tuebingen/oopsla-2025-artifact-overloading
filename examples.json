@@ -1,0 +1,140 @@
+[
+  {
+    "name": "Section 1.1.1",
+    "path": "examples/sec-1-1-1.over",
+    "code": "// Example: Section 1.1.1\n\n// Assume the existence of `addInt` and `addString`\nassume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\n\n// The program itself starts here:\n// `1 + 2` in the \"surface language\" of the paper\n// is the following in Variational Core (the language of this artifact)\n\nlet f = a<addInt, addString>; // note: `let` is _not_ generalized\nf(1, 2)\n\n// Only one valid overload (world): a = 1 (addInt)",
+    "_hash": "90bd361f3831b49127fc82041c096e4b"
+  },
+  {
+    "name": "Section 2.1",
+    "path": "examples/sec-2-1.over",
+    "code": "// Example: Section 2.1\nassume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\n\n// In \"surface language\": `\u03bbx => 0 + (x + x)`\n\u03bb(x) =>\n  let add_b = b<addInt, addString>;\n  let inner = add_b(x, x);\n  let add_a = a<addInt, addString>;\n  add_a(0, inner)\n\n// Only one valid overload (world): a = 1 (addInt) & b = 1 (addInt)",
+    "_hash": "6f82708043b6627ebcd9902c24063c83"
+  },
+  {
+    "name": "Section 2.2",
+    "path": "examples/sec-2-2.over",
+    "code": "// Example: Section 2.2\nassume readInt: String => Int;\nassume readDouble: String => Double;\n\nassume showInt: Int => String;\nassume showDouble: Double => String;\nassume showString: String => String;\n\n// In \"surface language\": `\u03bb str => show(read(str))`\n\u03bb(str) =>\n  let read = a<readInt, readDouble>;\n  let value = read(str);\n  let show = b<showInt, showDouble, showString>;\n  show(value)\n\n// Two possible overloads (worlds):\n// 1. a = 1 (readInt) & b = 1 (showInt)\n// 2. a = 2 (readDouble) & b = 2 (showDouble)\n// No other combinations are valid.",
+    "_hash": "9b41f0904c76b9cea28ac870e940d74d"
+  },
+  {
+    "name": "Section 2.3",
+    "path": "examples/sec-2-3.over",
+    "code": "// Example: Section 2.3\nassume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\n\n// In surface language: `\u03bb x => (x + 2) + \"3\"\n\u03bb (x) =>\n  let add_a = a<addInt, addString>;\n  let fst = add_a(x, 2);\n  let add_b = b<addInt, addString>;\n  let snd = add_b(fst, \"3\");\n  snd\n\n// No valid overloads (\"worlds\")",
+    "_hash": "6bd50efffecbcdc24e8fbf91e08e0b34"
+  },
+  {
+    "name": "Section 2.4.1, example A",
+    "path": "examples/sec-2-4-1-A.over",
+    "code": "// Example A: Section 2.4.1\n// (compare with example B of the same section)\nassume addInt: (Int, Int) => Int;\n\n// The invalid call lives outside of an alterative, in all worlds at once.\nlet invalid = addInt(\"\", 0);\nlet exampleA = a<invalid, 42>;\n\nexampleA\n\n// Therefore there are no valid overloads.",
+    "_hash": "2e42a6fdc013e6025bf9f1f37647940a"
+  },
+  {
+    "name": "Section 2.4.1, example B",
+    "path": "examples/sec-2-4-1-B.over",
+    "code": "// Example B: Section 2.4.1\n// (compare with example B of the same section)\nassume addInt: (Int, Int) => Int;\n\n// The invalid call lives inside of worlds where a = 1\nlet exampleB = a<addInt(\"\", 0), 42>;\nexampleB\n\n// so we can reject that world and choose the one where a = 2!\n",
+    "_hash": "2e3cfa368d522818cf878a29f498c0b6"
+  },
+  {
+    "name": "Section 2.4.2",
+    "path": "examples/sec-2-4-2.over",
+    "code": "// Example: Section 2.4.2\n\n// Notice that there are _four_ different valid worlds:\n// two dimensions, `a` and `b`, each having two alternatives.\nlet defaultNum = a<0, 0.0>;\nb<defaultNum, \"\">\n\n// You can also inline `defaultNum`.\n\n// This demonstrates that you can't faithfully encode\n// N-ary choices using only binary choices.",
+    "_hash": "777164ce2fbfaf838abe162135b8b21b"
+  },
+  {
+    "name": "Section 4.3.1",
+    "path": "examples/sec-4-3-1.over",
+    "code": "// Example: Section 4.3.1\nassume addInt: (Int, Int) => Int;\nassume addDouble: (Double, Double) => Double;\n\nassume printInt: Int => Unit;\nassume printString: String => Unit;\n\n// Notice that the dimensions are in two \"clusters\"\n// that could be resolved independently:\n// - `a` and `b` (from `add1` and `print1`)\n// - `c` and `d` (from `add2` and `print2`)\nlet add1 = a<addInt, addDouble>;\nlet print1 = b<printInt, printString>;\nlet add2 = c<addInt, addDouble>;\nlet print2 = d<printInt, printString>;\n\nlet _r1 = print1(add1(1, 2));\nprint2(add2(3, 4))\n",
+    "_hash": "c336dfc632fe29dd02160d3a0f6cebaf"
+  },
+  {
+    "name": "Section 5.2",
+    "path": "examples/sec-5-2.over",
+    "code": "// Example: Section 5.2\n\n// \"Lateral\" flow,\n// take a look at the bounds for `if_0`!\nif true\n  then a<0, \"\">\n  else \"hello\"\n",
+    "_hash": "3fc6d7b9e80ebe2438d889bf3fd47581"
+  },
+  {
+    "name": "Application, forwards and backwards",
+    "path": "examples/app-reverse-app.over",
+    "code": "// Example: application forwards and backwards\nassume succInt: Int => Int;\n\n// monomorphic, tries to apply f(x) or x(f)\nlet app = \u03bb(f, x) =>\n  a<f(x), x(f)>;\n\napp(succInt, 42)\n",
+    "_hash": "b2194e92d402b21ddb4367f3f7b2354e"
+  },
+  {
+    "name": "Apply: no overload",
+    "path": "examples/apply-no-overload.over",
+    "code": "assume apply: \u2200(A, B) . (A => B) => A => B;\n\n// Basic test for polytypes\nlet double = \u03bb x => x in\napply(double)(42)\n",
+    "_hash": "54f6b165069183ff82193c2f7e0d57d5"
+  },
+  {
+    "name": "Apply: addOne",
+    "path": "examples/apply-add-one.over",
+    "code": "assume apply: \u2200(A, B) . (A => B) => A => B;\nassume addOneI: Int => Int;\nassume addOneS: String => String;\nassume addOneD: Double => Double;\n\n// Only the `addOneI` solution (a = 1) is valid here, determined by the `42`.\nlet addOne = a<addOneI, addOneS, addOneD> in\napply(addOne)(42)\n",
+    "_hash": "726be864cdeb34184a8953958e6ed79e"
+  },
+  {
+    "name": "Apply: addOne with lambda",
+    "path": "examples/apply-add-one-lambda.over",
+    "code": "assume apply: \u2200(A, B) . (A => B) => A => B;\nassume addOneI: Int => Int;\nassume addOneS: String => String;\nassume addOneD: Double => Double;\n\n// Each of the solutions is equally valid here.\nlet addOne = a<addOneI, addOneS, addOneD> in\n\u03bb x => apply(addOne)(x)\n",
+    "_hash": "45af7cbc8847d054ad6fead0c3cd0a04"
+  },
+  {
+    "name": "Arity-based overloading",
+    "path": "examples/arity.over",
+    "code": "// Example: arity-based overloading\nassume add1: (Int) => Int;\nassume add2: (Int, Int) => Int;\nassume add3: (Int, Int, Int) => Int;\nassume add4: (Int, Int, Int, Int) => Int;\n\nlet add_a = a<add1, add2, add3, add4>;\nlet _ = add_a(1, 2, 3); // => a = 3\n\nlet add_b = b<add1, add2, add3, add4>;\nadd_b(4, 5) // => b = 2\n\n// Single world: a = 3 & b = 2\n",
+    "_hash": "a6b3867f83830f977120ce95d5f6d44a"
+  },
+  {
+    "name": "Currying",
+    "path": "examples/beginners.over",
+    "code": "assume curryIntString: (Int) => ((String) => Int);\nassume curryIntInt: (Int) => ((Int) => Int);\n\nlet f = a<curryIntString, curryIntInt>(5);\nf(50)\n// Beware that `f` is not polymorphic in its choice.\n// Try replacing `f(50)` with:\n// `let _ = f(50) in f(\"hello\")`\n// and you'll see that the overload resolution fails!",
+    "_hash": "858319051d45af5c8caae610a966fe2d"
+  },
+  {
+    "name": "Combine example",
+    "path": "examples/combine.over",
+    "code": "assume concat: (String, String) => String;\nassume intToString: Int => String;\nassume max: (Int, Int) => Int;\n\nlet combine = a<max, concat>;\n\nlet convertAndApply = \u03bb(x) =>\n  let s = intToString(x);\n  let converted = b<x, s>;\n  combine(converted, converted);\n\nconvertAndApply(42)\n",
+    "_hash": "86c7dcedaef0147bb479122abf059fe4"
+  },
+  {
+    "name": "Rebuttal: small version",
+    "path": "examples/rebuttal-mini.over",
+    "code": "// A tiny version of the program submitted for rebuttal\nassume fStr: (String) => Int;\nassume fInt: (Int) => Int;\nassume callStr: \u2200(R). ((String) => R) => R;\nassume callInt: \u2200(R). ((Int) => R) => R;\nassume compose: \u2200(R). ((R) => R, (R) => R) => ((R) => R);\n\ncall<callInt, callStr>(\n  compose(\n    compose(\n      a<fInt, fStr>,\n      b<fInt, fStr>\n    ),\n    c<fInt, fStr>\n  )\n)\n",
+    "_hash": "09ab2f008565ad0a4a769f5c5a7bc9ee"
+  },
+  {
+    "name": "Recursive example",
+    "path": "examples/recursion.over",
+    "code": "assume emptyD: (Double) => Bool; assume emptyI: (Int) => Bool; assume emptyS: (String) => Bool;\nassume addS: (String, String) => String; assume addD: (Double, Double) => Double; assume addI: (Int, Int) => Int;\nassume subD: (Double, Double) => Double; assume subI: (Int, Int) => Int;\n\nassume myShowStr: (String) => String;\n\n// Let's say we're defining a function `myShowInt`, an \"instance\" of `Show`\n// that uses both itself and `myShowStr` inside.\nlet rec myShowInt = \u03bb n =>\n  // First declare the overloads\n  let empty = e<emptyD, emptyI, emptyS>;\n  let show = s<myShowInt, myShowStr>;\n  let add = a<addD, addI, addS>;\n  let sub = m<subD, subI>;\n\n  // Then actually use them in the program:\n  if empty(n)\n    then \"\"\n    else\n      add(\"|\", show(sub(n, 1))); // unary encoding, recursive\n\nmyShowInt\n\n// The solution is:\n// e\u2082 (emptyI) & s\u2081 (myShowInt) & a\u2083 (addS) & m\u2082 (subI)\n",
+    "_hash": "7f24c5dcafdde862d8574184a843aff5"
+  },
+  {
+    "name": "Same dimension twice",
+    "path": "examples/same-dimension-twice.over",
+    "code": "// Example: Section 2.1, but same dimension `a` everywhere!\nassume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\n\n\u03bb(x) =>\n  let add_b = a<addInt, addString>;\n  let inner = add_b(x, x);\n  let add_a = a<addInt, addString>;\n  add_a(0, inner)\n",
+    "_hash": "2097c7c53b495d0e5511eb4965d5a29c"
+  },
+  {
+    "name": "Overloaded add on strings",
+    "path": "examples/small.over",
+    "code": "assume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\n\n// \"hello\" + \"there\" + \"world\"\nlet add1 = a<addInt, addString> in\nlet add2 = b<addInt, addString> in\nadd1(add2(\"hello\", \"there\"), \"world\")\n",
+    "_hash": "a7c303e3eb9b2977640c27fae93ee9fd"
+  },
+  {
+    "name": "'Why is Swift slow?' example",
+    "path": "examples/swift-online.over",
+    "code": "// Example translated from Swift: https://danielchasehooper.com/posts/why-swift-is-slow/\n// > Swift 6 spends 42 seconds on these 12 lines on an M1 Pro, only to spit out the notorious error:\n// > the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions\nassume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\nassume addDouble: (Double, Double) => Double;\n\nlet address = \"127.0.0.1\" in\nlet username = \"steve\" in\nlet password = \"1234\" in\nlet channel = 11 in // change to \"11\" to fix the type error\n\na<addString,addInt,addDouble>(\"http://\",\nb<addString,addInt,addDouble>(username,\nc<addString,addInt,addDouble>(\":\",\nd<addString,addInt,addDouble>(password,\ne<addString,addInt,addDouble>(\"@\",\nf<addString,addInt,addDouble>(address,\ng<addString,addInt,addDouble>(\"/api/\",\nh<addString,addInt,addDouble>(channel,\n\"/picture\"))))))))\n",
+    "_hash": "084a05169a6a83db9481334574624d2b"
+  },
+  {
+    "name": "\u03bbx => x + x + ..., clustered",
+    "path": "examples/x-add-x-many.over",
+    "code": "assume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\nassume addDouble: (Double, Double) => Double;\n\n// independent chains of\n// r1 := \u03bbx => x + x + x + ...\n// r2 := \u03bbx => x + x + x + ...\n// ...\n\nlet r1 = \u03bb(x) =>\n  a1<addDouble,addInt,addString>(\n    a2<addDouble,addInt,addString>(\n      a3<addDouble,addInt,addString>(\n        a4<addDouble,addInt,addString>(\n          a5<addDouble,addInt,addString>(\n            a6<addDouble,addInt,addString>(\n              a7<addDouble,addInt,addString>(\n                a8<addDouble,addInt,addString>(\n                  a9<addDouble,addInt,addString>(\n                    a10<addDouble,addInt,addString>(\n                      a11<addDouble,addInt,addString>(\n                        a12<addDouble,addInt,addString>(\n                          a13<addDouble,addInt,addString>(\n                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);\n\nlet r2 = \u03bb(x) =>\n  a21<addDouble,addInt,addString>(\n    a22<addDouble,addInt,addString>(\n      a23<addDouble,addInt,addString>(\n        a24<addDouble,addInt,addString>(\n          a25<addDouble,addInt,addString>(\n            a26<addDouble,addInt,addString>(\n              a27<addDouble,addInt,addString>(\n                a28<addDouble,addInt,addString>(\n                  a29<addDouble,addInt,addString>(\n                    a210<addDouble,addInt,addString>(\n                      a211<addDouble,addInt,addString>(\n                        a212<addDouble,addInt,addString>(\n                          a213<addDouble,addInt,addString>(\n                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);\n\nlet r3 = \u03bb(x) =>\n  a31<addDouble,addInt,addString>(\n    a32<addDouble,addInt,addString>(\n      a33<addDouble,addInt,addString>(\n        a34<addDouble,addInt,addString>(\n          a35<addDouble,addInt,addString>(\n            a36<addDouble,addInt,addString>(\n              a37<addDouble,addInt,addString>(\n                a38<addDouble,addInt,addString>(\n                  a39<addDouble,addInt,addString>(\n                    a310<addDouble,addInt,addString>(\n                      a311<addDouble,addInt,addString>(\n                        a312<addDouble,addInt,addString>(\n                          a313<addDouble,addInt,addString>(\n                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);\n\nlet r4 = \u03bb(x) =>\n  a41<addDouble,addInt,addString>(\n    a42<addDouble,addInt,addString>(\n      a43<addDouble,addInt,addString>(\n        a44<addDouble,addInt,addString>(\n          a45<addDouble,addInt,addString>(\n            a46<addDouble,addInt,addString>(\n              a47<addDouble,addInt,addString>(\n                a48<addDouble,addInt,addString>(\n                  a49<addDouble,addInt,addString>(\n                    a410<addDouble,addInt,addString>(\n                      a411<addDouble,addInt,addString>(\n                        a412<addDouble,addInt,addString>(\n                          a413<addDouble,addInt,addString>(\n                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);\n\nlet r5 = \u03bb(x) =>\n  a51<addDouble,addInt,addString>(\n    a52<addDouble,addInt,addString>(\n      a53<addDouble,addInt,addString>(\n        a54<addDouble,addInt,addString>(\n          a55<addDouble,addInt,addString>(\n            a56<addDouble,addInt,addString>(\n              a57<addDouble,addInt,addString>(\n                a58<addDouble,addInt,addString>(\n                  a59<addDouble,addInt,addString>(\n                    a510<addDouble,addInt,addString>(\n                      a511<addDouble,addInt,addString>(\n                        a512<addDouble,addInt,addString>(\n                          a513<addDouble,addInt,addString>(\n                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);\n\n42\n",
+    "_hash": "e8a3184dddaf233d7355ededc7fd2ab1"
+  },
+  {
+    "name": "\u03bbx => x + x + ...",
+    "path": "examples/x-add-x.over",
+    "code": "assume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\nassume addDouble: (Double, Double) => Double;\n\n// \u03bbx => x + x + x + ...\n\u03bb(x) =>\n  a1<addDouble,addInt,addString>(\n    a2<addDouble,addInt,addString>(\n      a3<addDouble,addInt,addString>(\n        a4<addDouble,addInt,addString>(\n          a5<addDouble,addInt,addString>(\n            a6<addDouble,addInt,addString>(\n              a7<addDouble,addInt,addString>(\n                a8<addDouble,addInt,addString>(\n                  a9<addDouble,addInt,addString>(\n                    a10<addDouble,addInt,addString>(\n                      a11<addDouble,addInt,addString>(\n                        a12<addDouble,addInt,addString>(\n                          a13<addDouble,addInt,addString>(\n                            x, x), x), x), x), x), x), x), x), x), x), x), x), x)\n",
+    "_hash": "55218c80646d84fbad8cafa736edcf2e"
+  }
+]

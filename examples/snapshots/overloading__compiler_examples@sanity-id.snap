@@ -1,0 +1,222 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/sanity-id.over
+---
+{
+  "status": "success",
+  "expression": "assume idPoly: ∀(T ). (T) => T\nassume idInt: (Int) => Int\nassume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nλ x => b‹addInt, addString›(x, a‹idPoly, idInt›(42)) => \n  b‹addInt, addString›(x, a‹idPoly, idInt›(42))",
+  "inferred_type": "(x_0) => app_5",
+  "worlds": {
+    "type": "many",
+    "count": 2.0
+  },
+  "solutions": [
+    [
+      "b₁",
+      "a₂"
+    ],
+    [
+      "b₁",
+      "a₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "b₁"
+      ],
+      "to": "over_b_1"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "b₂"
+      ],
+      "to": "over_b_1"
+    },
+    {
+      "from": "(T_3) => T_3",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_2"
+    },
+    {
+      "from": "(Int) => Int",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_2"
+    },
+    {
+      "from": "over_a_2",
+      "choices": [],
+      "to": "(Int) => app_4"
+    },
+    {
+      "from": "over_b_1",
+      "choices": [],
+      "to": "(x_0, app_4) => app_5"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "T_3",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "app_4",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_4",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_5",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "over_a_2",
+      "lower": [
+        {
+          "type_name": "(Int) => Int",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "(T_3) => T_3",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int) => app_4",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_b_1",
+      "lower": [
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(x_0, app_4) => app_5",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "x_0",
+      "lower": [],
+      "upper": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "b₂",
+          "a₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "b₂",
+          "a₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+assume addDouble: (Double, Double) => Double;
+
+// independent chains of
+// r1 := λx => x + x + x + ...
+// r2 := λx => x + x + x + ...
+// ...
+
+let r1 = λ(x) =>
+  a1<addDouble,addInt,addString>(
+    a2<addDouble,addInt,addString>(
+      a3<addDouble,addInt,addString>(
+        a4<addDouble,addInt,addString>(
+          a5<addDouble,addInt,addString>(
+            a6<addDouble,addInt,addString>(
+              a7<addDouble,addInt,addString>(
+                a8<addDouble,addInt,addString>(
+                  a9<addDouble,addInt,addString>(
+                    a10<addDouble,addInt,addString>(
+                      a11<addDouble,addInt,addString>(
+                        a12<addDouble,addInt,addString>(
+                          a13<addDouble,addInt,addString>(
+                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);
+
+let r2 = λ(x) =>
+  a21<addDouble,addInt,addString>(
+    a22<addDouble,addInt,addString>(
+      a23<addDouble,addInt,addString>(
+        a24<addDouble,addInt,addString>(
+          a25<addDouble,addInt,addString>(
+            a26<addDouble,addInt,addString>(
+              a27<addDouble,addInt,addString>(
+                a28<addDouble,addInt,addString>(
+                  a29<addDouble,addInt,addString>(
+                    a210<addDouble,addInt,addString>(
+                      a211<addDouble,addInt,addString>(
+                        a212<addDouble,addInt,addString>(
+                          a213<addDouble,addInt,addString>(
+                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);
+
+let r3 = λ(x) =>
+  a31<addDouble,addInt,addString>(
+    a32<addDouble,addInt,addString>(
+      a33<addDouble,addInt,addString>(
+        a34<addDouble,addInt,addString>(
+          a35<addDouble,addInt,addString>(
+            a36<addDouble,addInt,addString>(
+              a37<addDouble,addInt,addString>(
+                a38<addDouble,addInt,addString>(
+                  a39<addDouble,addInt,addString>(
+                    a310<addDouble,addInt,addString>(
+                      a311<addDouble,addInt,addString>(
+                        a312<addDouble,addInt,addString>(
+                          a313<addDouble,addInt,addString>(
+                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);
+
+let r4 = λ(x) =>
+  a41<addDouble,addInt,addString>(
+    a42<addDouble,addInt,addString>(
+      a43<addDouble,addInt,addString>(
+        a44<addDouble,addInt,addString>(
+          a45<addDouble,addInt,addString>(
+            a46<addDouble,addInt,addString>(
+              a47<addDouble,addInt,addString>(
+                a48<addDouble,addInt,addString>(
+                  a49<addDouble,addInt,addString>(
+                    a410<addDouble,addInt,addString>(
+                      a411<addDouble,addInt,addString>(
+                        a412<addDouble,addInt,addString>(
+                          a413<addDouble,addInt,addString>(
+                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);
+
+let r5 = λ(x) =>
+  a51<addDouble,addInt,addString>(
+    a52<addDouble,addInt,addString>(
+      a53<addDouble,addInt,addString>(
+        a54<addDouble,addInt,addString>(
+          a55<addDouble,addInt,addString>(
+            a56<addDouble,addInt,addString>(
+              a57<addDouble,addInt,addString>(
+                a58<addDouble,addInt,addString>(
+                  a59<addDouble,addInt,addString>(
+                    a510<addDouble,addInt,addString>(
+                      a511<addDouble,addInt,addString>(
+                        a512<addDouble,addInt,addString>(
+                          a513<addDouble,addInt,addString>(
+                            x, x), x), x), x), x), x), x), x), x), x), x), x), x);
+
+42

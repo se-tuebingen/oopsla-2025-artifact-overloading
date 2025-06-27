@@ -1,0 +1,192 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/apply-add-one-lambda.over
+---
+{
+  "status": "success",
+  "expression": "assume apply: ∀(A, B ). ((A) => B) => (A) => B\nassume addOneI: (Int) => Int\nassume addOneS: (String) => String\nassume addOneD: (Double) => Double\nlet addOne = a‹addOneI, addOneS, addOneD›\nλ x => apply(addOne)(x) => apply(addOne)(x)",
+  "inferred_type": "(x_1) => app_5",
+  "worlds": {
+    "type": "many",
+    "count": 3.0
+  },
+  "solutions": [
+    [
+      "a₃"
+    ],
+    [
+      "a₂"
+    ],
+    [
+      "a₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "(Int) => Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "(String) => String",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "(Double) => Double",
+      "choices": [
+        "a₃"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "((A_2) => B_3) => (A_2) => B_3",
+      "choices": [],
+      "to": "(over_a_0) => app_4"
+    },
+    {
+      "from": "app_4",
+      "choices": [],
+      "to": "(x_1) => app_5"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "A_2",
+      "lower": [],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a₃"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "B_3",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a₃"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "app_5",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "app_4",
+      "lower": [
+        {
+          "type_name": "(A_2) => B_3",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(x_1) => app_5",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "app_5",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a₃"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "over_a_0",
+      "lower": [
+        {
+          "type_name": "(Double) => Double",
+          "choices": [
+            "a₃"
+          ]
+        },
+        {
+          "type_name": "(Int) => Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "(String) => String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(A_2) => B_3",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "x_1",
+      "lower": [],
+      "upper": [
+        {
+          "type_name": "A_2",
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

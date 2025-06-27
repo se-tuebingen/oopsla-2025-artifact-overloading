@@ -1,0 +1,11 @@
+// Example: Section 2.4.2
+
+// Notice that there are _four_ different valid worlds:
+// two dimensions, `a` and `b`, each having two alternatives.
+let defaultNum = a<0, 0.0>;
+b<defaultNum, "">
+
+// You can also inline `defaultNum`.
+
+// This demonstrates that you can't faithfully encode
+// N-ary choices using only binary choices.

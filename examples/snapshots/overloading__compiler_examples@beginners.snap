@@ -1,0 +1,122 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/beginners.over
+---
+{
+  "status": "success",
+  "expression": "assume curryIntString: (Int) => (String) => Int\nassume curryIntInt: (Int) => (Int) => Int\nlet f = a‹curryIntString, curryIntInt›(5)\nf(50)",
+  "inferred_type": "app_2",
+  "worlds": {
+    "type": "one"
+  },
+  "solutions": [
+    [
+      "a₂"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "(Int) => (String) => Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "(Int) => (Int) => Int",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "over_a_0",
+      "choices": [],
+      "to": "(Int) => app_1"
+    },
+    {
+      "from": "app_1",
+      "choices": [],
+      "to": "(Int) => app_2"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "app_1",
+      "lower": [
+        {
+          "type_name": "(Int) => Int",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "(String) => Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int) => app_2",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "app_2",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "over_a_0",
+      "lower": [
+        {
+          "type_name": "(Int) => (Int) => Int",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "(Int) => (String) => Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int) => app_1",
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    }
+  ]
+}

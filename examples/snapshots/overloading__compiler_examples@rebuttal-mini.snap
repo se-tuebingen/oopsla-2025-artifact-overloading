@@ -1,0 +1,874 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/rebuttal-mini.over
+---
+{
+  "status": "success",
+  "expression": "assume fStr: (String) => Int\nassume fInt: (Int) => Int\nassume callStr: ∀(R ). ((String) => R) => R\nassume callInt: ∀(R ). ((Int) => R) => R\nassume compose: ∀(R ). ((R) => R, (R) => R) => (R) => R\ncall‹callInt, callStr›(\n  compose(compose(a‹fInt, fStr›, b‹fInt, fStr›), c‹fInt, fStr›)\n)",
+  "inferred_type": "app_10",
+  "worlds": {
+    "type": "one"
+  },
+  "solutions": [
+    [
+      "call₁",
+      "a₁",
+      "b₁",
+      "c₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "((Int) => R_1) => R_1",
+      "choices": [
+        "call₁"
+      ],
+      "to": "over_call_0"
+    },
+    {
+      "from": "((String) => R_2) => R_2",
+      "choices": [
+        "call₂"
+      ],
+      "to": "over_call_0"
+    },
+    {
+      "from": "(Int) => Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_5"
+    },
+    {
+      "from": "(String) => Int",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_5"
+    },
+    {
+      "from": "(Int) => Int",
+      "choices": [
+        "b₁"
+      ],
+      "to": "over_b_6"
+    },
+    {
+      "from": "(String) => Int",
+      "choices": [
+        "b₂"
+      ],
+      "to": "over_b_6"
+    },
+    {
+      "from": "((R_4) => R_4, (R_4) => R_4) => (R_4) => R_4",
+      "choices": [],
+      "to": "(over_a_5, over_b_6) => app_7"
+    },
+    {
+      "from": "(Int) => Int",
+      "choices": [
+        "c₁"
+      ],
+      "to": "over_c_8"
+    },
+    {
+      "from": "(String) => Int",
+      "choices": [
+        "c₂"
+      ],
+      "to": "over_c_8"
+    },
+    {
+      "from": "((R_3) => R_3, (R_3) => R_3) => (R_3) => R_3",
+      "choices": [],
+      "to": "(app_7, over_c_8) => app_9"
+    },
+    {
+      "from": "over_call_0",
+      "choices": [],
+      "to": "(app_9) => app_10"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "R_1",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "c₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "c₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "call₁",
+            "call₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "app_10",
+          "choices": [
+            "call₁"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "R_2",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "call₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "c₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "c₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "call₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "app_10",
+          "choices": [
+            "call₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "R_3",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "c₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "c₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "call₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "c₁"
+          ]
+        },
+        {
+          "type_name": "R_1",
+          "choices": [
+            "call₁"
+          ]
+        },
+        {
+          "type_name": "R_2",
+          "choices": [
+            "call₂"
+          ]
+        },
+        {
+          "type_name": "R_4",
+          "choices": []
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "c₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "R_4",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "c₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "c₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "call₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "R_3",
+          "choices": []
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_10",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "call₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "c₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₁",
+            "c₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "c₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "call₂",
+            "c₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "call₁",
+            "call₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "call₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "app_7",
+      "lower": [
+        {
+          "type_name": "(R_4) => R_4",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(R_3) => R_3",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "app_9",
+      "lower": [
+        {
+          "type_name": "(R_3) => R_3",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(Int) => R_1",
+          "choices": [
+            "call₁"
+          ]
+        },
+        {
+          "type_name": "(String) => R_2",
+          "choices": [
+            "call₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "over_a_5",
+      "lower": [
+        {
+          "type_name": "(Int) => Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "(String) => Int",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(R_4) => R_4",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_b_6",
+      "lower": [
+        {
+          "type_name": "(Int) => Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "(String) => Int",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(R_4) => R_4",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_c_8",
+      "lower": [
+        {
+          "type_name": "(Int) => Int",
+          "choices": [
+            "c₁"
+          ]
+        },
+        {
+          "type_name": "(String) => Int",
+          "choices": [
+            "c₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(R_3) => R_3",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_call_0",
+      "lower": [
+        {
+          "type_name": "((Int) => R_1) => R_1",
+          "choices": [
+            "call₁"
+          ]
+        },
+        {
+          "type_name": "((String) => R_2) => R_2",
+          "choices": [
+            "call₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_9) => app_10",
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₁",
+          "a₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₁",
+          "b₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₁",
+          "c₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₂",
+          "b₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₂",
+          "b₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₂",
+          "c₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₂",
+          "c₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "b₁",
+          "b₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "b₁",
+          "c₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "b₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "b₂",
+          "c₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "b₂",
+          "c₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "call₁",
+          "a₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "call₁",
+          "b₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "call₁",
+          "c₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "c₁",
+          "c₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "c₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "call₂",
+          "a₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "call₂",
+          "b₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "call₂",
+          "c₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    }
+  ]
+}

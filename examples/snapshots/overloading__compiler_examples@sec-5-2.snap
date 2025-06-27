@@ -1,0 +1,101 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/sec-5-2.over
+---
+{
+  "status": "success",
+  "expression": "if true then a‹0, \"\"› else \"hello\"",
+  "inferred_type": "if_0",
+  "worlds": {
+    "type": "many",
+    "count": 2.0
+  },
+  "solutions": [
+    [
+      "a₂"
+    ],
+    [
+      "a₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_1"
+    },
+    {
+      "from": "String",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_1"
+    },
+    {
+      "from": "Bool",
+      "choices": [],
+      "to": "Bool"
+    },
+    {
+      "from": "over_a_1",
+      "choices": [],
+      "to": "if_0"
+    },
+    {
+      "from": "String",
+      "choices": [],
+      "to": "if_0"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "if_0",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": []
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "over_a_1",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "if_0",
+          "choices": []
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

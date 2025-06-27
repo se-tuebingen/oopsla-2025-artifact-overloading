@@ -1,0 +1,12 @@
+// Example: Section 2.1
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+
+// In "surface language": `λx => 0 + (x + x)`
+λ(x) =>
+  let add_b = b<addInt, addString>;
+  let inner = add_b(x, x);
+  let add_a = a<addInt, addString>;
+  add_a(0, inner)
+
+// Only one valid overload (world): a = 1 (addInt) & b = 1 (addInt)

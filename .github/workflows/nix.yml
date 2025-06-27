@@ -1,0 +1,127 @@
+name: Build and Test
+
+on:
+  workflow_dispatch: # allows manual triggering from the Actions UI
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize]
+  repository_dispatch:
+    types: [create-pull-request]
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        os: 
+          - ubuntu-latest    # x64 Linux
+          - macos-14        # ARM64 MacOS (M1/M2)
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: "Checking out repository..."
+        uses: actions/checkout@v4
+
+      - name: "Installing and configuring the nix package manager..."
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            accept-flake-config = true
+            # Enable experimental features for flakes
+            experimental-features = nix-command flakes
+            # Improve build performance
+            max-jobs = auto
+            cores = 0
+
+      - name: "Setting up build tools..."
+        run: |
+          nix profile install nixpkgs#nix-fast-build # parallel nix builder
+          nix profile install nixpkgs#cargo-audit # Audit Cargo.lock files for crates with security vulnerabilities
+
+      - name: "Building all packages..."
+        run: nix-fast-build --skip-cached --no-nom --flake ".#packages"
+
+      - name: "Running cargo security audit..."
+        run: cargo-audit audit
+
+      - name: "Checking flake inputs for stale & insecure nixpkgs versions..."
+        uses: DeterminateSystems/flake-checker-action@main
+
+      - name: "Testing native package..."
+        run: |
+          echo "Testing native overloading package..."
+          nix run .#native -- --help
+
+      - name: "Building WASM package..."
+        run: |
+          echo "Building WASM package..."
+          nix build .#wasm
+          echo "WASM build completed successfully"
+
+      - name: "Running benchmarks..."
+        run: |
+          echo "Running benchmarks with --sizes 5..."
+          nix run .#benchmark -- --sizes 5
+          
+      - name: "Displaying benchmark results..."
+        run: |
+          echo "=== Benchmark Results ==="
+          if [ -f "benchmark_comparison.md" ]; then
+            cat benchmark_comparison.md
+          else
+            echo "Warning: benchmark_comparison.md not found"
+            echo "Available files:"
+            ls -la
+            exit 1
+          fi
+
+      # Upload WASM build artifact for Pages deployment (only from Ubuntu to avoid duplication)
+      - name: "Upload WASM build for Pages..."
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-build
+          path: result/
+          retention-days: 1
+
+  # Deploy to GitHub Pages
+  deploy-pages:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: "Download WASM build artifact..."
+        uses: actions/download-artifact@v4
+        with:
+          name: wasm-build
+          path: ./site
+
+      - name: "Setup Pages..."
+        uses: actions/configure-pages@v5
+
+      - name: "Upload to Pages..."
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
+
+      - name: "Deploy to GitHub Pages..."
+        id: deployment
+        uses: actions/deploy-pages@v4

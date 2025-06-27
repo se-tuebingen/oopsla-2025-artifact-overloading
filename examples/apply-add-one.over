@@ -1,0 +1,8 @@
+assume apply: ∀(A, B) . (A => B) => A => B;
+assume addOneI: Int => Int;
+assume addOneS: String => String;
+assume addOneD: Double => Double;
+
+// Only the `addOneI` solution (a = 1) is valid here, determined by the `42`.
+let addOne = a<addOneI, addOneS, addOneD> in
+apply(addOne)(42)

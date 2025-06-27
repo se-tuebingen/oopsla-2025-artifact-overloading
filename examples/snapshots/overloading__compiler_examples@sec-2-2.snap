@@ -1,0 +1,250 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/sec-2-2.over
+---
+{
+  "status": "success",
+  "expression": "assume readInt: (String) => Int\nassume readDouble: (String) => Double\nassume showInt: (Int) => String\nassume showDouble: (Double) => String\nassume showString: (String) => String\nλ str => let read = a‹readInt, readDouble›\nlet value = read(str)\nlet show = b‹showInt, showDouble, showString›\nshow(value) => \n  let read = a‹readInt, readDouble›\n  let value = read(str)\n  let show = b‹showInt, showDouble, showString›\n  show(value)",
+  "inferred_type": "(str_0) => app_4",
+  "worlds": {
+    "type": "many",
+    "count": 2.0
+  },
+  "solutions": [
+    [
+      "a₂",
+      "b₂"
+    ],
+    [
+      "a₁",
+      "b₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "(String) => Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_1"
+    },
+    {
+      "from": "(String) => Double",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_1"
+    },
+    {
+      "from": "over_a_1",
+      "choices": [],
+      "to": "(str_0) => app_2"
+    },
+    {
+      "from": "(Int) => String",
+      "choices": [
+        "b₁"
+      ],
+      "to": "over_b_3"
+    },
+    {
+      "from": "(Double) => String",
+      "choices": [
+        "b₂"
+      ],
+      "to": "over_b_3"
+    },
+    {
+      "from": "(String) => String",
+      "choices": [
+        "b₃"
+      ],
+      "to": "over_b_3"
+    },
+    {
+      "from": "over_b_3",
+      "choices": [],
+      "to": "(app_2) => app_4"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "app_2",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "b₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_4",
+      "lower": [
+        {
+          "type_name": "String",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "b₃"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "over_a_1",
+      "lower": [
+        {
+          "type_name": "(String) => Double",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "(String) => Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(str_0) => app_2",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_b_3",
+      "lower": [
+        {
+          "type_name": "(Double) => String",
+          "choices": [
+            "b₂"
+          ]
+        },
+        {
+          "type_name": "(Int) => String",
+          "choices": [
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "(String) => String",
+          "choices": [
+            "b₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_2) => app_4",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "str_0",
+      "lower": [],
+      "upper": [
+        {
+          "type_name": "String",
+          "choices": [
+            "a₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a₂",
+          "b₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a₂",
+          "b₃"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₁",
+          "b₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₁",
+          "b₃"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    }
+  ]
+}

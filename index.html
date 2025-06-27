@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Essence of Overloading: Playground</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/mllike/mllike.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#3498db',
+                        'secondary': '#2ecc71',
+                        'accent': '#e74c3c',
+                    },
+                    fontFamily: {
+                        'mono': ['"Fira Code"', 'monospace'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        .CodeMirror {
+            min-height: 450px;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+        }
+
+        .timing-info {
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #2c3e50;
+        }
+
+        .timing-info.error {
+            background: #ffeaea;
+            border-left-color: #e74c3c;
+            color: #c0392b;
+        }
+
+        .timing-info.running {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .timing-info.running::before {
+            content: "⏳ ";
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .output-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #68D391;
+        }
+
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #68D391;
+        }
+        .constraint-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .constraint-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .bounds-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .bounds-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .type-text {
+            font-family: 'Fira Code', monospace;
+            color: black;
+            font-size: 0.875rem;
+        }
+
+        .choices-sup {
+            font-size: 0.75rem;
+            color: rgb(45, 95, 134);
+            background-color: rgb(233, 239, 243);
+            font-family: 'Fira Code', monospace;
+            padding: 1px 3px;
+            border-radius: 3px;
+            margin: 2px;
+        }
+
+        .type-unbreakable {
+            white-space: nowrap;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center mb-8 text-blue-600">Simple Essence of Overloading: Playground</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Input Panel -->
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="bg-blue-600 text-white p-4 rounded-t-lg">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold">Input</h2>
+                        <div class="flex items-center space-x-4">
+                            <!-- Auto-run toggle -->
+                            <div class="flex items-center">
+                                <label for="autoRun" class="mr-2 text-sm">Auto-run</label>
+                                <div class="relative inline-block w-10 align-middle select-none transition duration-200 ease-in">
+                                    <input type="checkbox" name="autoRun" id="autoRun" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" checked>
+                                    <label for="autoRun" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                                </div>
+                            </div>
+
+                            <!-- Examples dropdown -->
+                            <select id="examples" class="bg-white text-gray-800 border rounded px-3 py-1 text-sm hover:bg-gray-100">
+                                <option value="">Select example</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4">
+                    <textarea id="editor" class="w-full" placeholder="Enter your code here..."></textarea>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-b-lg border-t">
+                    <button id="runButton" class="bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded font-medium disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        Run Type-checking
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Panel -->
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="bg-secondary text-white p-4 rounded-t-lg">
+                    <h2 class="text-lg font-semibold">Output</h2>
+                </div>
+
+                <div class="p-4">
+                    <div id="output">
+                        <div class="text-gray-500 italic">Enter code to see compilation results...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="details-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <button id="toggle-constraints" class="w-full text-left font-semibold text-blue-600 focus:outline-none mb-2">
+                    Constraints ▼
+                </button>
+                <div id="constraints-content" class="hidden">
+                    <!-- Constraints will be inserted here -->
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <button id="toggle-bounds" class="w-full text-left font-semibold text-blue-600 focus:outline-none mb-2">
+                    Bounds ▼
+                </button>
+                <div id="bounds-content" class="hidden">
+                    <!-- Bounds will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="performance-container" class="bg-white rounded-lg shadow-md gap-6 mt-6">
+            <button id="toggle-errors" class="w-full text-left p-4 font-semibold text-blue-600 hover:bg-gray-50 focus:outline-none rounded-t-lg border-b">
+                Error Constraints ▼
+            </button>
+            <div id="errors-content" class="hidden p-4">
+                <!-- Error constraints will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import init, { wasm_parse_and_test } from './pkg/overloading.js';
+
+        let editor;
+        let isWasmReady = false;
+        let debounceTimer;
+
+        // Load examples from JSON file
+        let examples = [];
+
+        async function loadExamples() {
+            try {
+                const response = await fetch('./examples.json');
+                examples = await response.json();
+            } catch (error) {
+                console.error('Failed to load examples:', error);
+
+                // Fallback example if loading fails
+                examples = [
+                    {
+                        name: "Section 1.1.1",
+                        code: "// Example: Section 1.1.1\n\n// Assume the existence of `addInt` and `addString`\nassume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\n\n// The program itself starts here:\n// `1 + 2` in the \"surface language\" of the paper\n// is the following in Variational Core (the language of this artifact)\n\nlet f = a<addInt, addString>; // note: `let` is _not_ generalized\nf(1, 2)\n\n// Only one valid overload (world): a = 1 (addInt)",
+                    }
+                ];
+            }
+        }
+
+        function formatChoicesForConstraints(choices) {
+            if (!choices || choices.length === 0) return '';
+            return choices.join('');
+        }
+
+        function formatChoicesForBounds(choices) {
+            if (!choices || choices.length === 0) return '';
+            return `<sup class="choices-sup">${choices.join('')}</sup>`;
+        }
+
+        function renderConstraintsTable(constraints) {
+            if (!constraints || constraints.length === 0) {
+                return '<div class="text-gray-500">No constraints</div>';
+            }
+
+            return `
+                <table class="constraint-table w-full">
+                    <tbody>
+                        ${constraints.map(constraint => {
+                            const choicesText = formatChoicesForConstraints(constraint.choices);
+                            const supText = choicesText ? `<sup class="choices-sup">${choicesText}</sup>` : '';
+
+                            return `
+                                <tr>
+                                    <td class="text-right">
+                                        <span class="type-unbreakable font-mono text-sm text-black">${constraint.from}</span>
+                                    </td>
+                                    <td class="text-center">&lt;:${supText}</td>
+                                    <td>
+                                        <span class="type-unbreakable font-mono text-sm text-black">${constraint.to}</span>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderErrorsTable(errors) {
+            if (!errors || errors.length === 0) {
+                return '<div class="text-gray-500">No error constraints</div>';
+            }
+
+            return `
+                <table class="constraint-table w-full">
+                    <tbody>
+                        ${errors.map(err => {
+                            const message = err.message;
+                            const constraint = err.constraint;
+                            const choicesText = formatChoicesForConstraints(constraint.choices);
+                            const supText = choicesText ? `<sup class="choices-sup">${choicesText}</sup>` : '';
+
+                            return `
+                                <tr>
+                                    <td class="text-right">
+                                        <span class="type-unbreakable font-mono text-sm text-black">${constraint.from}</span>
+                                    </td>
+                                    <td class="text-center">&lt;:${supText}</td>
+                                    <td>
+                                        <span class="type-unbreakable font-mono text-sm text-black">${constraint.to}</span>
+                                    </td>
+                                    <td class="text-sm text-black">${message}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderBoundsTable(bounds) {
+            if (!bounds || bounds.length === 0) {
+                return '<div class="text-gray-500">No bounds</div>';
+            }
+
+            return `
+                <table class="bounds-table w-full">
+                    <tbody>
+                        ${bounds.map(bound => {
+                            const lowerBounds = bound.lower.map(b =>
+                                `<span class="type-unbreakable">${b.type_name}${formatChoicesForBounds(b.choices)}</span>`
+                            ).join(', ');
+
+                            const upperBounds = bound.upper.map(b =>
+                                `<span class="type-unbreakable">${b.type_name}${formatChoicesForBounds(b.choices)}</span>`
+                            ).join(', ');
+
+                            return `
+                                <tr>
+                                    <td class="text-right font-mono text-sm text-black">${lowerBounds || '∅'}</td>
+                                    <td class="text-center">&lt;:</td>
+                                    <td class="text-center font-mono text-sm text-black font-bold">${bound.variable}</td>
+                                    <td class="text-center">&lt;:</td>
+                                    <td class="font-mono text-sm text-black">${upperBounds || '∅'}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function renderMainOutput(data) {
+            let output = '';
+
+            // Inferred type
+            output += `Inferred type: ${data.inferred_type}\n\n`;
+
+            // Worlds
+            if (data.worlds) {
+                switch(data.worlds.type) {
+                    case 'no':
+                        output += 'Overload resolution unsuccessful\nWorlds: None\n';
+                        break;
+                    case 'one':
+                        output += 'Overload resolution successful\nWorlds: One\n';
+                        break;
+                    case 'many':
+                        output += `Overload resolution unsuccessful\nWorlds: Many (${data.worlds.count})\n`;
+                        break;
+                }
+                output += '\n';
+            }
+
+            // Solutions
+            if (data.solutions && data.solutions.length > 0) {
+                output += 'Solutions:\n';
+                data.solutions.forEach(solution => {
+                    output += `  ${solution.join('')}\n`;
+                });
+            }
+
+            return output;
+        }
+
+        function renderJsonOutput(jsonResult) {
+            try {
+                const data = JSON.parse(jsonResult);
+
+                console.log(data);
+
+                if (data.status === 'success') {
+                    document.getElementById('constraints-content').innerHTML = renderConstraintsTable(data.constraints);
+                    document.getElementById('errors-content').innerHTML = renderErrorsTable(data.errors);
+                    document.getElementById('bounds-content').innerHTML = renderBoundsTable(data.bounds);
+                    return renderMainOutput(data);
+                } else {
+                    // Handle error case
+                    document.getElementById('constraints-content').innerHTML = '<div class="text-red-500">Error occurred</div>';
+                    document.getElementById('errors-content').innerHTML = '<div class="text-red-500">Error occurred</div>';
+                    document.getElementById('bounds-content').innerHTML = '<div class="text-red-500">Error occurred</div>';
+
+                    return `Error: ${data.error}${data.expression ? `\nExpression: ${data.expression}` : ''}`;
+                }
+            } catch (error) {
+                document.getElementById('constraints-content').innerHTML = '<div class="text-red-500">Failed to parse JSON</div>';
+                document.getElementById('errors-content').innerHTML = '<div class="text-red-500">Failed to parse JSON</div>';
+                document.getElementById('bounds-content').innerHTML = '<div class="text-red-500">Failed to parse JSON</div>';
+                return `Failed to parse result: ${error.error}`;
+            }
+        }
+
+        // Utility function to measure and display computation time
+        function measureAndDisplay(computationFn, outputElementId) {
+            const startTime = performance.now();
+            const runButton = document.getElementById('runButton');
+            runButton.disabled = true;
+            runButton.textContent = 'Running...';
+
+            // Show running indicator immediately
+            document.getElementById(outputElementId).innerHTML =
+                `<div class="timing-info running">
+                    Processing...
+                </div>
+                <div class="output-content">Compiling your code...</div>`;
+
+            const delay = 5;
+
+            setTimeout(() => {
+                try {
+                    const result = computationFn();
+
+                    const endTime = performance.now();
+                    const duration = endTime - startTime - delay;
+
+                    let durationText;
+                    if (duration < 0) {
+                        durationText = "<1 ms";
+                    } else if (duration < 1000) {
+                        durationText = `${duration.toFixed(0)} ms`;
+                    } else {
+                        durationText = `${(duration / 1000).toFixed(2)} seconds`;
+                    }
+
+                    // Update details and get main output
+                    const mainOutput = renderJsonOutput(result);
+
+                    document.getElementById(outputElementId).innerHTML =
+                        `<div class="timing-info">
+                            Type-checking (constraint gathering, solving, overload resolution) completed in ${durationText}
+                        </div>
+                        <div class="output-content">${mainOutput}</div>`;
+
+                } catch (error) {
+                    const endTime = performance.now();
+                    const duration = endTime - startTime;
+
+                    document.getElementById(outputElementId).innerHTML =
+                        `<div class="timing-info error">
+                            Failed after ${duration.toFixed(2)} ms
+                        </div>
+                        <div class="output-content text-red-600">Error: ${error.message}</div>`;
+                } finally {
+                    runButton.disabled = false;
+                    runButton.textContent = 'Run Type-checking';
+                }
+            }, delay);
+        }
+
+        function runCompilation() {
+            if (!isWasmReady) {
+                document.getElementById('output').innerHTML =
+                    '<div class="text-gray-500 italic">Loading WASM module...</div>';
+                return;
+            }
+
+            const input = editor.getValue().trim();
+
+            if (!input) {
+                document.getElementById('output').innerHTML =
+                    '<div class="text-gray-500 italic">Enter code to see compilation results...</div>';
+                return;
+            }
+
+            measureAndDisplay(
+                () => wasm_parse_and_test(input, true),
+                'output'
+            );
+        }
+
+        function debouncedRun() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (document.getElementById('autoRun').checked) {
+                    runCompilation();
+                }
+            }, 5);
+        }
+
+        async function initializeApp() {
+            try {
+                await init();
+                await loadExamples();
+                isWasmReady = true;
+
+                // Initialize CodeMirror
+                editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+                    mode: {
+                        name: 'mllike',
+                        extraWords: {
+                            'assume': 'keyword',
+                            'λ': 'keyword',
+                            '∀': 'keyword',
+                            '\\': 'keyword',
+                        },
+                        slashComments: true,
+                    },
+                    theme: 'default',
+                    lineNumbers: true,
+                    matchBrackets: true,
+                    indentUnit: 4,
+                    indentWithTabs: false,
+                    autoCloseBrackets: true,
+                    placeholder: 'Enter your code here...'
+                });
+
+                // Set up event listeners
+                editor.on('change', debouncedRun);
+
+                document.getElementById('autoRun').addEventListener('change', function() {
+                    if (this.checked) {
+                        runCompilation();
+                    }
+                });
+
+                document.getElementById('runButton').addEventListener('click', runCompilation);
+
+                // Populate examples dropdown
+                const examplesSelect = document.getElementById('examples');
+                examples.forEach((example, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = example.name;
+                    examplesSelect.appendChild(option);
+                });
+
+                // Handle example selection
+                examplesSelect.addEventListener('change', (e) => {
+                    const selectedIndex = e.target.value;
+                    if (selectedIndex !== "") {
+                        editor.setValue(examples[selectedIndex].code);
+                        debouncedRun();
+                    }
+                });
+
+                // Add event listeners for collapsible sections
+                ['constraints', 'bounds', 'errors'].forEach(id => {
+                    document.getElementById(`toggle-${id}`).addEventListener('click', function() {
+                        const content = document.getElementById(`${id}-content`) || document.getElementById(`${id}-metrics`);
+                        const isHidden = content.classList.contains('hidden');
+                        content.classList.toggle('hidden', !isHidden);
+                        this.textContent = this.textContent.replace(isHidden ? '▼' : '▲', isHidden ? '▲' : '▼');
+                    });
+                });
+
+                // Set initial example
+                editor.setValue(examples[0].code);
+                setTimeout(() => runCompilation(), 100);
+
+            } catch (error) {
+                document.getElementById('output').innerHTML =
+                    `<div class="timing-info error">
+                        Failed to initialize: ${error.message}
+                    </div>`;
+            }
+        }
+
+        initializeApp();
+    </script>
+</body>
+</html>

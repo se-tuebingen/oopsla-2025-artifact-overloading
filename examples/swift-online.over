@@ -1,0 +1,21 @@
+// Example translated from Swift: https://danielchasehooper.com/posts/why-swift-is-slow/
+// > Swift 6 spends 42 seconds on these 12 lines on an M1 Pro, only to spit out the notorious error:
+// > the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+assume addDouble: (Double, Double) => Double;
+
+let address = "127.0.0.1" in
+let username = "steve" in
+let password = "1234" in
+let channel = 11 in // change to "11" to fix the type error
+
+a<addString,addInt,addDouble>("http://",
+b<addString,addInt,addDouble>(username,
+c<addString,addInt,addDouble>(":",
+d<addString,addInt,addDouble>(password,
+e<addString,addInt,addDouble>("@",
+f<addString,addInt,addDouble>(address,
+g<addString,addInt,addDouble>("/api/",
+h<addString,addInt,addDouble>(channel,
+"/picture"))))))))

@@ -1,0 +1,7 @@
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+
+// "hello" + "there" + "world"
+let add1 = a<addInt, addString> in
+let add2 = b<addInt, addString> in
+add1(add2("hello", "there"), "world")

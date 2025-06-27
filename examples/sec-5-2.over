@@ -1,0 +1,7 @@
+// Example: Section 5.2
+
+// "Lateral" flow,
+// take a look at the bounds for `if_0`!
+if true
+  then a<0, "">
+  else "hello"

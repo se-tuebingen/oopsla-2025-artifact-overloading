@@ -1,0 +1,8 @@
+// Example: application forwards and backwards
+assume succInt: Int => Int;
+
+// monomorphic, tries to apply f(x) or x(f)
+let app = λ(f, x) =>
+  a<f(x), x(f)>;
+
+app(succInt, 42)

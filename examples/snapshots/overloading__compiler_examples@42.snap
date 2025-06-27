@@ -1,0 +1,19 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/42.over
+---
+{
+  "status": "success",
+  "expression": "42",
+  "inferred_type": "Int",
+  "worlds": {
+    "type": "one"
+  },
+  "solutions": [
+    []
+  ],
+  "constraints": [],
+  "bounds": [],
+  "errors": []
+}

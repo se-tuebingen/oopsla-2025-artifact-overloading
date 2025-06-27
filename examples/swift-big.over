@@ -1,0 +1,7 @@
+assume succString: (String) => Int;
+assume succInt: (Int) => Int;
+assume callString: ∀(R). ((String) => R) => R;
+assume callInt: ∀(R). ((Int) => R) => R;
+assume compose: ∀(R). ((R) => R, (R) => R) => ((R) => R);
+
+call1<callInt,callString>(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(a<succInt, succString>, b<succInt, succString>), c<succInt, succString>), d<succInt, succString>), e<succInt, succString>), f<succInt, succString>), g<succInt, succString>), h<succInt, succString>), i<succInt, succString>), j<succInt, succString>), k<succInt, succString>), l<succInt, succString>), m<succInt, succString>), n<succInt, succString>), o<succInt, succString>))

@@ -1,0 +1,12 @@
+assume concat: (String, String) => String;
+assume intToString: Int => String;
+assume max: (Int, Int) => Int;
+
+let combine = a<max, concat>;
+
+let convertAndApply = λ(x) =>
+  let s = intToString(x);
+  let converted = b<x, s>;
+  combine(converted, converted);
+
+convertAndApply(42)

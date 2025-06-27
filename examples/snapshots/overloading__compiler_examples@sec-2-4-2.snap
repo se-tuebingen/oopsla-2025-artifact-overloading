@@ -1,0 +1,116 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/sec-2-4-2.over
+---
+{
+  "status": "success",
+  "expression": "let defaultNum = a‹0, 0›\nb‹defaultNum, \"\"›",
+  "inferred_type": "over_b_1",
+  "worlds": {
+    "type": "many",
+    "count": 4.0
+  },
+  "solutions": [
+    [
+      "a₂",
+      "b₂"
+    ],
+    [
+      "a₂",
+      "b₁"
+    ],
+    [
+      "a₁",
+      "b₂"
+    ],
+    [
+      "a₁",
+      "b₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "Int",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "Double",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_0"
+    },
+    {
+      "from": "over_a_0",
+      "choices": [
+        "b₁"
+      ],
+      "to": "over_b_1"
+    },
+    {
+      "from": "String",
+      "choices": [
+        "b₂"
+      ],
+      "to": "over_b_1"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "over_a_0",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "over_b_1",
+          "choices": [
+            "b₁"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "over_b_1",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a₂",
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁",
+            "b₁"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "b₂"
+          ]
+        }
+      ],
+      "upper": []
+    }
+  ],
+  "errors": []
+}

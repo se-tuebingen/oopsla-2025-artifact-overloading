@@ -1,0 +1,13 @@
+// Example: arity-based overloading
+assume add1: (Int) => Int;
+assume add2: (Int, Int) => Int;
+assume add3: (Int, Int, Int) => Int;
+assume add4: (Int, Int, Int, Int) => Int;
+
+let add_a = a<add1, add2, add3, add4>;
+let _ = add_a(1, 2, 3); // => a = 3
+
+let add_b = b<add1, add2, add3, add4>;
+add_b(4, 5) // => b = 2
+
+// Single world: a = 3 & b = 2

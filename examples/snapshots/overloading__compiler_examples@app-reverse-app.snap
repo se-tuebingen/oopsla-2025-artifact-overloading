@@ -1,0 +1,167 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/app-reverse-app.over
+---
+{
+  "status": "success",
+  "expression": "assume succInt: (Int) => Int\nlet app = λ (f, x) => a‹f(x), x(f)›\napp(succInt, 42)",
+  "inferred_type": "app_5",
+  "worlds": {
+    "type": "one"
+  },
+  "solutions": [
+    [
+      "a₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "f_0",
+      "choices": [
+        "a₁"
+      ],
+      "to": "(x_1) => app_3"
+    },
+    {
+      "from": "app_3",
+      "choices": [
+        "a₁"
+      ],
+      "to": "over_a_2"
+    },
+    {
+      "from": "x_1",
+      "choices": [
+        "a₂"
+      ],
+      "to": "(f_0) => app_4"
+    },
+    {
+      "from": "app_4",
+      "choices": [
+        "a₂"
+      ],
+      "to": "over_a_2"
+    },
+    {
+      "from": "(f_0, x_1) => over_a_2",
+      "choices": [],
+      "to": "((Int) => Int, Int) => app_5"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "app_3",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "over_a_2",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_4",
+      "lower": [],
+      "upper": [
+        {
+          "type_name": "over_a_2",
+          "choices": [
+            "a₂"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_5",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "f_0",
+      "lower": [
+        {
+          "type_name": "(Int) => Int",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(x_1) => app_3",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "over_a_2",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "app_5",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "x_1",
+      "lower": [
+        {
+          "type_name": "Int",
+          "choices": []
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(f_0) => app_4",
+          "choices": [
+            "a₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a₁"
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a₂"
+        ],
+        "to": "(f_0) => app_4"
+      },
+      "message": "Unsolvable constraint (fallthrough)"
+    }
+  ]
+}

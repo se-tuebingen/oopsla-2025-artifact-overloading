@@ -1,0 +1,2354 @@
+---
+source: src/main.rs
+expression: output
+input_file: examples/x-add-x.over
+---
+{
+  "status": "success",
+  "expression": "assume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nassume addDouble: (Double, Double) => Double\nλ x => a1‹addDouble, addInt, addString›(\n  a2‹addDouble, addInt, addString›(\n    a3‹addDouble, addInt, addString›(\n      a4‹addDouble, addInt, addString›(\n        a5‹addDouble, addInt, addString›(\n          a6‹addDouble, addInt, addString›(\n            a7‹addDouble, addInt, addString›(\n              a8‹addDouble, addInt, addString›(\n                a9‹addDouble, addInt, addString›(\n                  a10‹addDouble, addInt, addString›(\n                    a11‹addDouble, addInt, addString›(\n                      a12‹addDouble, addInt, addString›(\n                        a13‹addDouble, addInt, addString›(x, x),\n                        x\n                      ),\n                      x\n                    ),\n                    x\n                  ),\n                  x\n                ),\n                x\n              ),\n              x\n            ),\n            x\n          ),\n          x\n        ),\n        x\n      ),\n      x\n    ),\n    x\n  ),\n  x\n) => \n  a1‹addDouble, addInt, addString›(\n    a2‹addDouble, addInt, addString›(\n      a3‹addDouble, addInt, addString›(\n        a4‹addDouble, addInt, addString›(\n          a5‹addDouble, addInt, addString›(\n            a6‹addDouble, addInt, addString›(\n              a7‹addDouble, addInt, addString›(\n                a8‹addDouble, addInt, addString›(\n                  a9‹addDouble, addInt, addString›(\n                    a10‹addDouble, addInt, addString›(\n                      a11‹addDouble, addInt, addString›(\n                        a12‹addDouble, addInt, addString›(\n                          a13‹addDouble, addInt, addString›(x, x),\n                          x\n                        ),\n                        x\n                      ),\n                      x\n                    ),\n                    x\n                  ),\n                  x\n                ),\n                x\n              ),\n              x\n            ),\n            x\n          ),\n          x\n        ),\n        x\n      ),\n      x\n    ),\n    x\n  )",
+  "inferred_type": "(x_0) => app_26",
+  "worlds": {
+    "type": "many",
+    "count": 3.0
+  },
+  "solutions": [
+    [
+      "a1₃",
+      "a2₃",
+      "a3₃",
+      "a4₃",
+      "a5₃",
+      "a6₃",
+      "a7₃",
+      "a8₃",
+      "a9₃",
+      "a10₃",
+      "a11₃",
+      "a12₃",
+      "a13₃"
+    ],
+    [
+      "a1₂",
+      "a2₂",
+      "a3₂",
+      "a4₂",
+      "a5₂",
+      "a6₂",
+      "a7₂",
+      "a8₂",
+      "a9₂",
+      "a10₂",
+      "a11₂",
+      "a12₂",
+      "a13₂"
+    ],
+    [
+      "a1₁",
+      "a2₁",
+      "a3₁",
+      "a4₁",
+      "a5₁",
+      "a6₁",
+      "a7₁",
+      "a8₁",
+      "a9₁",
+      "a10₁",
+      "a11₁",
+      "a12₁",
+      "a13₁"
+    ]
+  ],
+  "constraints": [
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a1₁"
+      ],
+      "to": "over_a1_1"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a1₂"
+      ],
+      "to": "over_a1_1"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a1₃"
+      ],
+      "to": "over_a1_1"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a2₁"
+      ],
+      "to": "over_a2_2"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a2₂"
+      ],
+      "to": "over_a2_2"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a2₃"
+      ],
+      "to": "over_a2_2"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a3₁"
+      ],
+      "to": "over_a3_3"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a3₂"
+      ],
+      "to": "over_a3_3"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a3₃"
+      ],
+      "to": "over_a3_3"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a4₁"
+      ],
+      "to": "over_a4_4"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a4₂"
+      ],
+      "to": "over_a4_4"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a4₃"
+      ],
+      "to": "over_a4_4"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a5₁"
+      ],
+      "to": "over_a5_5"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a5₂"
+      ],
+      "to": "over_a5_5"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a5₃"
+      ],
+      "to": "over_a5_5"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a6₁"
+      ],
+      "to": "over_a6_6"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a6₂"
+      ],
+      "to": "over_a6_6"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a6₃"
+      ],
+      "to": "over_a6_6"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a7₁"
+      ],
+      "to": "over_a7_7"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a7₂"
+      ],
+      "to": "over_a7_7"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a7₃"
+      ],
+      "to": "over_a7_7"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a8₁"
+      ],
+      "to": "over_a8_8"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a8₂"
+      ],
+      "to": "over_a8_8"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a8₃"
+      ],
+      "to": "over_a8_8"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a9₁"
+      ],
+      "to": "over_a9_9"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a9₂"
+      ],
+      "to": "over_a9_9"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a9₃"
+      ],
+      "to": "over_a9_9"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a10₁"
+      ],
+      "to": "over_a10_10"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a10₂"
+      ],
+      "to": "over_a10_10"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a10₃"
+      ],
+      "to": "over_a10_10"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a11₁"
+      ],
+      "to": "over_a11_11"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a11₂"
+      ],
+      "to": "over_a11_11"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a11₃"
+      ],
+      "to": "over_a11_11"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a12₁"
+      ],
+      "to": "over_a12_12"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a12₂"
+      ],
+      "to": "over_a12_12"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a12₃"
+      ],
+      "to": "over_a12_12"
+    },
+    {
+      "from": "(Double, Double) => Double",
+      "choices": [
+        "a13₁"
+      ],
+      "to": "over_a13_13"
+    },
+    {
+      "from": "(Int, Int) => Int",
+      "choices": [
+        "a13₂"
+      ],
+      "to": "over_a13_13"
+    },
+    {
+      "from": "(String, String) => String",
+      "choices": [
+        "a13₃"
+      ],
+      "to": "over_a13_13"
+    },
+    {
+      "from": "over_a13_13",
+      "choices": [],
+      "to": "(x_0, x_0) => app_14"
+    },
+    {
+      "from": "over_a12_12",
+      "choices": [],
+      "to": "(app_14, x_0) => app_15"
+    },
+    {
+      "from": "over_a11_11",
+      "choices": [],
+      "to": "(app_15, x_0) => app_16"
+    },
+    {
+      "from": "over_a10_10",
+      "choices": [],
+      "to": "(app_16, x_0) => app_17"
+    },
+    {
+      "from": "over_a9_9",
+      "choices": [],
+      "to": "(app_17, x_0) => app_18"
+    },
+    {
+      "from": "over_a8_8",
+      "choices": [],
+      "to": "(app_18, x_0) => app_19"
+    },
+    {
+      "from": "over_a7_7",
+      "choices": [],
+      "to": "(app_19, x_0) => app_20"
+    },
+    {
+      "from": "over_a6_6",
+      "choices": [],
+      "to": "(app_20, x_0) => app_21"
+    },
+    {
+      "from": "over_a5_5",
+      "choices": [],
+      "to": "(app_21, x_0) => app_22"
+    },
+    {
+      "from": "over_a4_4",
+      "choices": [],
+      "to": "(app_22, x_0) => app_23"
+    },
+    {
+      "from": "over_a3_3",
+      "choices": [],
+      "to": "(app_23, x_0) => app_24"
+    },
+    {
+      "from": "over_a2_2",
+      "choices": [],
+      "to": "(app_24, x_0) => app_25"
+    },
+    {
+      "from": "over_a1_1",
+      "choices": [],
+      "to": "(app_25, x_0) => app_26"
+    }
+  ],
+  "bounds": [
+    {
+      "variable": "app_14",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a13₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a13₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a13₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a12₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a12₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a12₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_15",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a12₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a12₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a12₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a11₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a11₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a11₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_16",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a11₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a11₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a11₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a10₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a10₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a10₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_17",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a10₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a10₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a10₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a9₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a9₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a9₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_18",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a9₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a9₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a9₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a8₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a8₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a8₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_19",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a8₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a8₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a8₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a7₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a7₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a7₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_20",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a7₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a7₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a7₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a6₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a6₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a6₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_21",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a6₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a6₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a6₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a5₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a5₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a5₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_22",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a5₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a5₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a5₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a4₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a4₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a4₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_23",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a4₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a4₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a4₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a3₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a3₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a3₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_24",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a3₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a3₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a3₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a2₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a2₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a2₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_25",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a2₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a2₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a2₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a1₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a1₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a1₃"
+          ]
+        }
+      ]
+    },
+    {
+      "variable": "app_26",
+      "lower": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a1₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a1₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a1₃"
+          ]
+        }
+      ],
+      "upper": []
+    },
+    {
+      "variable": "over_a10_10",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a10₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a10₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a10₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_16, x_0) => app_17",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a11_11",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a11₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a11₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a11₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_15, x_0) => app_16",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a12_12",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a12₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a12₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a12₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_14, x_0) => app_15",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a13_13",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a13₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a13₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a13₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(x_0, x_0) => app_14",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a1_1",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a1₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a1₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a1₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_25, x_0) => app_26",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a2_2",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a2₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a2₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a2₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_24, x_0) => app_25",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a3_3",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a3₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a3₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a3₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_23, x_0) => app_24",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a4_4",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a4₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a4₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a4₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_22, x_0) => app_23",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a5_5",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a5₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a5₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a5₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_21, x_0) => app_22",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a6_6",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a6₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a6₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a6₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_20, x_0) => app_21",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a7_7",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a7₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a7₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a7₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_19, x_0) => app_20",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a8_8",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a8₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a8₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a8₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_18, x_0) => app_19",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "over_a9_9",
+      "lower": [
+        {
+          "type_name": "(Double, Double) => Double",
+          "choices": [
+            "a9₁"
+          ]
+        },
+        {
+          "type_name": "(Int, Int) => Int",
+          "choices": [
+            "a9₂"
+          ]
+        },
+        {
+          "type_name": "(String, String) => String",
+          "choices": [
+            "a9₃"
+          ]
+        }
+      ],
+      "upper": [
+        {
+          "type_name": "(app_17, x_0) => app_18",
+          "choices": []
+        }
+      ]
+    },
+    {
+      "variable": "x_0",
+      "lower": [],
+      "upper": [
+        {
+          "type_name": "Double",
+          "choices": [
+            "a10₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a11₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a12₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a13₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a1₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a2₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a3₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a4₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a5₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a6₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a7₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a8₁"
+          ]
+        },
+        {
+          "type_name": "Double",
+          "choices": [
+            "a9₁"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a10₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a11₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a12₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a13₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a1₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a2₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a3₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a4₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a5₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a6₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a7₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a8₂"
+          ]
+        },
+        {
+          "type_name": "Int",
+          "choices": [
+            "a9₂"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a10₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a11₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a12₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a13₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a1₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a2₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a3₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a4₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a5₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a6₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a7₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a8₃"
+          ]
+        },
+        {
+          "type_name": "String",
+          "choices": [
+            "a9₃"
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a10₂",
+          "a11₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a10₃",
+          "a11₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a11₂",
+          "a12₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a11₃",
+          "a12₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a12₂",
+          "a13₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a12₃",
+          "a13₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a1₂",
+          "a2₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a1₃",
+          "a2₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a2₂",
+          "a3₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a2₃",
+          "a3₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a3₂",
+          "a4₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a3₃",
+          "a4₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a4₂",
+          "a5₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a4₃",
+          "a5₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a5₂",
+          "a6₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a5₃",
+          "a6₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a6₂",
+          "a7₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a6₃",
+          "a7₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a7₂",
+          "a8₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a7₃",
+          "a8₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a8₂",
+          "a9₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a8₃",
+          "a9₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a9₂",
+          "a10₁"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Double",
+        "choices": [
+          "a9₃",
+          "a10₁"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a10₁",
+          "a11₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a10₃",
+          "a11₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a11₁",
+          "a12₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a11₃",
+          "a12₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a12₁",
+          "a13₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a12₃",
+          "a13₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a1₁",
+          "a2₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a1₃",
+          "a2₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a2₁",
+          "a3₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a2₃",
+          "a3₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a3₁",
+          "a4₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a3₃",
+          "a4₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a4₁",
+          "a5₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a4₃",
+          "a5₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a5₁",
+          "a6₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a5₃",
+          "a6₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a6₁",
+          "a7₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a6₃",
+          "a7₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a7₁",
+          "a8₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a7₃",
+          "a8₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a8₁",
+          "a9₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a8₃",
+          "a9₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a9₁",
+          "a10₂"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "Int",
+        "choices": [
+          "a9₃",
+          "a10₂"
+        ],
+        "to": "String"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a10₁",
+          "a11₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a10₂",
+          "a11₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a11₁",
+          "a12₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a11₂",
+          "a12₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a12₁",
+          "a13₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a12₂",
+          "a13₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a1₁",
+          "a2₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a1₂",
+          "a2₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a2₁",
+          "a3₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a2₂",
+          "a3₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a3₁",
+          "a4₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a3₂",
+          "a4₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a4₁",
+          "a5₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a4₂",
+          "a5₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a5₁",
+          "a6₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a5₂",
+          "a6₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a6₁",
+          "a7₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a6₂",
+          "a7₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a7₁",
+          "a8₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a7₂",
+          "a8₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a8₁",
+          "a9₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a8₂",
+          "a9₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a9₁",
+          "a10₃"
+        ],
+        "to": "Double"
+      },
+      "message": "Incompatible base types"
+    },
+    {
+      "constraint": {
+        "from": "String",
+        "choices": [
+          "a9₂",
+          "a10₃"
+        ],
+        "to": "Int"
+      },
+      "message": "Incompatible base types"
+    }
+  ]
+}

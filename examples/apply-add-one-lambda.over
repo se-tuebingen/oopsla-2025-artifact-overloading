@@ -1,0 +1,8 @@
+assume apply: ∀(A, B) . (A => B) => A => B;
+assume addOneI: Int => Int;
+assume addOneS: String => String;
+assume addOneD: Double => Double;
+
+// Each of the solutions is equally valid here.
+let addOne = a<addOneI, addOneS, addOneD> in
+λ x => apply(addOne)(x)

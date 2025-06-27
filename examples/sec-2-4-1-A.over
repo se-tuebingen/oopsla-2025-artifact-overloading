@@ -1,0 +1,11 @@
+// Example A: Section 2.4.1
+// (compare with example B of the same section)
+assume addInt: (Int, Int) => Int;
+
+// The invalid call lives outside of an alterative, in all worlds at once.
+let invalid = addInt("", 0);
+let exampleA = a<invalid, 42>;
+
+exampleA
+
+// Therefore there are no valid overloads.
