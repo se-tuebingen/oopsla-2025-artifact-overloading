@@ -146,7 +146,7 @@ There are four main commands that you might want to run, all of them are describ
 
 - `nix run .#website` to run the website server (recommended using instead of running the native binary for exploration and experimentation)
 - `nix run .#benchmark` to run the benchmark script
-- `nix run .#native -- examples/rebuttal-mini.over` to run the CLI, native Rust binary (recommended for manual benchmarking) on an example
+- `nix run .#native -- examples/arity.over` to run the CLI, native Rust binary (recommended for manual benchmarking) on an example
 - `nix develop` to open a new Nix development shell with all dependencies for development
 
 ### Exploring the paper, interactively
