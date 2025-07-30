@@ -1,5 +1,4 @@
-benchmark_comparison.json
-benchmark_comparison.md
+results_perf.*
 result
 result/
 target/

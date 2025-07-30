@@ -139,6 +139,50 @@
           exec ${pkgs.swift}/bin/swiftc "$@"
         '';
 
+        perfBenchmarkPackage = pkgs.writeShellApplication {
+          name = "overloading-perf-benchmark";
+
+          runtimeInputs = with pkgs; [
+            hyperfine
+            swiftWrapper
+          ];
+
+          text = ''
+            set -e
+
+            echo "Running performance benchmarks..."
+            echo "Using Swift wrapper: ${swiftWrapper}/bin/swift-wrapper"
+            echo "Using overloading binary: ${nativePackage}/bin/overloading"
+            echo ""
+
+            hyperfine -N -i --time-unit millisecond --min-runs 10 --warmup 3 \
+              --export-csv results_perf.csv \
+              --export-markdown results_perf.md \
+              --export-json results_perf.json \
+              --command-name "3sat-orig.over" '${nativePackage}/bin/overloading -s benchmarks/3sat-orig.over' \
+              --command-name "3sat-orig.swift" '${swiftWrapper}/bin/swift-wrapper -typecheck benchmarks/3sat-orig.swift' \
+              --command-name "3sat-hard.over" '${nativePackage}/bin/overloading -s benchmarks/3sat-hard.over' \
+              --command-name "3sat-hard.swift" '${swiftWrapper}/bin/swift-wrapper -typecheck benchmarks/3sat-hard.swift' \
+              --command-name "uri-orig.over" '${nativePackage}/bin/overloading -s benchmarks/uri-orig.over' \
+              --command-name "uri-orig.swift" '${swiftWrapper}/bin/swift-wrapper -typecheck benchmarks/uri-orig.swift' \
+              --command-name "uri-big.over" '${nativePackage}/bin/overloading -s benchmarks/uri-big.over' \
+              --command-name "uri-big.swift" '${swiftWrapper}/bin/swift-wrapper -typecheck benchmarks/uri-big.swift' \
+              --command-name "addneg-orig.over" '${nativePackage}/bin/overloading -s benchmarks/addneg-orig.over' \
+              --command-name "addneg-orig.swift" '${swiftWrapper}/bin/swift-wrapper -typecheck benchmarks/addneg-orig.swift' \
+              --command-name "addneg-big.over" '${nativePackage}/bin/overloading -s benchmarks/addneg-big.over' \
+              --command-name "addneg-big.swift" '${swiftWrapper}/bin/swift-wrapper -typecheck benchmarks/addneg-big.swift' \
+              --command-name "recur.over" '${nativePackage}/bin/overloading -s benchmarks/recur.over' \
+              --command-name "recur.swift" '${swiftWrapper}/bin/swift-wrapper -typecheck benchmarks/recur.swift' \
+              --command-name "dist.over" '${nativePackage}/bin/overloading -s benchmarks/dist.over' \
+              --command-name "dist.swift" '${swiftWrapper}/bin/swift-wrapper -typecheck benchmarks/dist.swift' \
+              --command-name "cps-10.over" '${nativePackage}/bin/overloading -s benchmarks/cps-10.over' \
+              --command-name "cps-10.swift" '${swiftWrapper}/bin/swift-wrapper -typecheck benchmarks/cps-10.swift' \
+              --command-name "cps-20.over" '${nativePackage}/bin/overloading -s benchmarks/cps-20.over' \
+              --command-name "cps-100.over" '${nativePackage}/bin/overloading -s benchmarks/cps-100.over' \
+          ''; # cps-20.swift and cps-100.swift are not benchmarked as they time out...
+
+        };
+
         # Benchmark script package
         benchmarkPackage = pkgs.writeShellApplication {
           name = "overloading-benchmark";
@@ -177,6 +221,7 @@
           wasm = wasmPackage;
           website = websiteServer;
           benchmark = benchmarkPackage;
+          perf-benchmark = perfBenchmarkPackage;
           swift-wrapper = swiftWrapper;
         };
 
@@ -206,6 +251,11 @@
         };
 
         apps = {
+          perf-benchmark = {
+            type = "app";
+            program = "${perfBenchmarkPackage}/bin/overloading-perf-benchmark";
+          };
+
           benchmark = {
             type = "app";
             program = "${benchmarkPackage}/bin/overloading-benchmark";

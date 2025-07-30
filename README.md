@@ -155,7 +155,7 @@ We recommend using the website target -- run `nix run .#website`, then check the
 to explore example programs, modify them or even write your own programs in Variational Core by using the WASM target.
 
 There are five sections ("boxes") on the website:
-- The **editor** on the top left with rudimentary syntax highlighting where examples (both from the paper and outside of it) can be selected, run, and modified. The examples starting with `Section ...`, such as `Section 1.1.1` are direct, commented examples from the paper.
+- The **editor** on the top left with rudimentary syntax highlighting where examples (both from the paper and outside of it) can be selected, run, and modified. The examples starting with `Section ...`, such as `Section 1.1.1` are direct, commented examples from the paper. Examples starting with `Benchmark: ...` are the performance benchmarks from Section 5.1 of the paper.
 - The **output** on the bottom left which is updated on every keystroke, showing the (unsubstituted!) output type, if the overload resolution was a success or a failure (and why),
 and the solution(s) in the paper notation.
 - The collapsible **Constraints** section on the bottom left showing variational constraints gathered from the source program.
@@ -165,6 +165,23 @@ and the solution(s) in the paper notation.
 We also provide a syntax cheat sheet in [SYNTAX_CHEATSHEET.md](./SYNTAX_CHEATSHEET.md) for an easy overview of the supported syntactical constructs.
 
 ### Benchmarking
+
+#### Performance Comparison with Swift (Section 5.1)
+
+In order to reproduce Figure 8 in Section 5.1, run the following command which benchmarks our implementation against Swift using Nix:
+```bash
+$ nix run .#perf-benchmark
+```
+
+The benchmark takes just a few minutes to run, its results are then available in `results_perf.{csv, md, json}`. The Markdown version of this file can be used to compare with Figure 8. For comparison, the Markdown table [data/results_perf_default.md](./data/results_perf_default.md) contains the values included the paper measured by the same script.
+
+Customization is possible by changing the `perfBenchmarkPackage` derivation in `flake.nix` that just calls the `hyperfine` tool.
+More specifically, it's possible to set the minimum number of runs `--min-runs` or `--warmup` , or even to remove/add a new benchmark.
+The benchmarked programs are in `./benchmarks/`.
+
+Note that some Swift benchmarks (`uri-*`) fail, this is expected as Swift correctly reports an error.
+
+#### Scalability Analysis (Section 5.2)
 
 As of right now, there is only one small benchmark introduced in the rebuttal that compares our prototype against a similar program from Swift 5.8.
 **Warning:** We are planning to revise this section as part of the major revision, see section [Paper claims](#paper-claims) for more details.
