@@ -96,18 +96,6 @@
     "_hash": "86c7dcedaef0147bb479122abf059fe4"
   },
   {
-    "name": "Rebuttal: small version",
-    "path": "examples/rebuttal-mini.over",
-    "code": "// A tiny version of the program submitted for rebuttal\nassume fStr: (String) => Int;\nassume fInt: (Int) => Int;\nassume callStr: \u2200(R). ((String) => R) => R;\nassume callInt: \u2200(R). ((Int) => R) => R;\nassume compose: \u2200(R). ((R) => R, (R) => R) => ((R) => R);\n\ncall<callInt, callStr>(\n  compose(\n    compose(\n      a<fInt, fStr>,\n      b<fInt, fStr>\n    ),\n    c<fInt, fStr>\n  )\n)\n",
-    "_hash": "09ab2f008565ad0a4a769f5c5a7bc9ee"
-  },
-  {
-    "name": "Recursive example",
-    "path": "examples/recursion.over",
-    "code": "assume emptyD: (Double) => Bool; assume emptyI: (Int) => Bool; assume emptyS: (String) => Bool;\nassume addS: (String, String) => String; assume addD: (Double, Double) => Double; assume addI: (Int, Int) => Int;\nassume subD: (Double, Double) => Double; assume subI: (Int, Int) => Int;\n\nassume myShowStr: (String) => String;\n\n// Let's say we're defining a function `myShowInt`, an \"instance\" of `Show`\n// that uses both itself and `myShowStr` inside.\nlet rec myShowInt = \u03bb n =>\n  // First declare the overloads\n  let empty = e<emptyD, emptyI, emptyS>;\n  let show = s<myShowInt, myShowStr>;\n  let add = a<addD, addI, addS>;\n  let sub = m<subD, subI>;\n\n  // Then actually use them in the program:\n  if empty(n)\n    then \"\"\n    else\n      add(\"|\", show(sub(n, 1))); // unary encoding, recursive\n\nmyShowInt\n\n// The solution is:\n// e\u2082 (emptyI) & s\u2081 (myShowInt) & a\u2083 (addS) & m\u2082 (subI)\n",
-    "_hash": "7f24c5dcafdde862d8574184a843aff5"
-  },
-  {
     "name": "Same dimension twice",
     "path": "examples/same-dimension-twice.over",
     "code": "// Example: Section 2.1, but same dimension `a` everywhere!\nassume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\n\n\u03bb(x) =>\n  let add_b = a<addInt, addString>;\n  let inner = add_b(x, x);\n  let add_a = a<addInt, addString>;\n  add_a(0, inner)\n",
@@ -118,12 +106,6 @@
     "path": "examples/small.over",
     "code": "assume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\n\n// \"hello\" + \"there\" + \"world\"\nlet add1 = a<addInt, addString> in\nlet add2 = b<addInt, addString> in\nadd1(add2(\"hello\", \"there\"), \"world\")\n",
     "_hash": "a7c303e3eb9b2977640c27fae93ee9fd"
-  },
-  {
-    "name": "'Why is Swift slow?' example",
-    "path": "examples/swift-online.over",
-    "code": "// Example translated from Swift: https://danielchasehooper.com/posts/why-swift-is-slow/\n// > Swift 6 spends 42 seconds on these 12 lines on an M1 Pro, only to spit out the notorious error:\n// > the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions\nassume addInt: (Int, Int) => Int;\nassume addString: (String, String) => String;\nassume addDouble: (Double, Double) => Double;\n\nlet address = \"127.0.0.1\" in\nlet username = \"steve\" in\nlet password = \"1234\" in\nlet channel = 11 in // change to \"11\" to fix the type error\n\na<addString,addInt,addDouble>(\"http://\",\nb<addString,addInt,addDouble>(username,\nc<addString,addInt,addDouble>(\":\",\nd<addString,addInt,addDouble>(password,\ne<addString,addInt,addDouble>(\"@\",\nf<addString,addInt,addDouble>(address,\ng<addString,addInt,addDouble>(\"/api/\",\nh<addString,addInt,addDouble>(channel,\n\"/picture\"))))))))\n",
-    "_hash": "084a05169a6a83db9481334574624d2b"
   },
   {
     "name": "\u03bbx => x + x + ..., clustered",
