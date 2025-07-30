@@ -6,6 +6,7 @@ input_file: examples/apply-add-one.over
 {
   "status": "success",
   "expression": "assume apply: ∀(A, B ). ((A) => B) => (A) => B\nassume addOneI: (Int) => Int\nassume addOneS: (String) => String\nassume addOneD: (Double) => Double\nlet addOne = a‹addOneI, addOneS, addOneD›\napply(addOne)(42)",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_4",
   "worlds": {
     "type": "one"

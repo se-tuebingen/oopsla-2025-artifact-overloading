@@ -6,6 +6,7 @@ input_file: examples/42.over
 {
   "status": "success",
   "expression": "42",
+  "dimension_spans": "[spans]",
   "inferred_type": "Int",
   "worlds": {
     "type": "one"

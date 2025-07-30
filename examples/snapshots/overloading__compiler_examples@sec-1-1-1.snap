@@ -6,6 +6,7 @@ input_file: examples/sec-1-1-1.over
 {
   "status": "success",
   "expression": "assume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nlet f = a‹addInt, addString›\nf(1, 2)",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_1",
   "worlds": {
     "type": "one"

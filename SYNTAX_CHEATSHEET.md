@@ -60,6 +60,15 @@ where `a` is a fresh dimension and `addInt, addString` are the available overloa
 
 Note that the alternatives can be arbitrary expressions.
 
+### Anonymous choices
+
+Unlike in the paper, the artefact supports anonymous (nameless) choices:
+by omitting the dimension variable, the user tells the compiler to come up with a fresh dimension variable.
+
+```ml
+<expr1, expr2, expr3> // ~> desugared to `a<expr1, expr2, expr3>` for some free dimension `a`
+```
+
 ## Externs / Assumptions
 
 The (core) language of the artifact doesn't have any builtins of its own.
@@ -68,6 +77,17 @@ The (core) language of the artifact doesn't have any builtins of its own.
 assume intToString: Int => String; expr    // function type
 assume id: ∀A. A => A; expr                // polymorphic type
 assume const: ∀(A, B). A => B => A; expr   // multiple type vars
+```
+
+### "Syntax sugar" assumptions
+
+You can use `assume NAME = CHOICE` as a helper ("syntax sugar") for overloaded names:
+```ml
+assume add = a<addInt, addStr>; add(add(1, 2), 3)
+// ~> a<addInt, addStr>(a<addInt, addStr>(1, 2), 3)
+
+assume add = <addInt, addStr>; add(add(1, 2), 3)     // anonymous assumption
+// ~> b<addInt, addStr>(c<addInt, addStr>(1, 2), 3)  // ... results in fresh dimensions
 ```
 
 ## Types

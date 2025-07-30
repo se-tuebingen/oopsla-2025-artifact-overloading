@@ -6,6 +6,7 @@ input_file: examples/small.over
 {
   "status": "success",
   "expression": "assume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nlet add1 = a‹addInt, addString›\nlet add2 = b‹addInt, addString›\nadd1(add2(\"hello\", \"there\"), \"world\")",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_3",
   "worlds": {
     "type": "one"

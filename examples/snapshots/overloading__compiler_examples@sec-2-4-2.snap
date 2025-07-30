@@ -6,6 +6,7 @@ input_file: examples/sec-2-4-2.over
 {
   "status": "success",
   "expression": "let defaultNum = a‹0, 0›\nb‹defaultNum, \"\"›",
+  "dimension_spans": "[spans]",
   "inferred_type": "over_b_1",
   "worlds": {
     "type": "many",
@@ -13,8 +14,8 @@ input_file: examples/sec-2-4-2.over
   },
   "solutions": [
     [
-      "a₂",
-      "b₂"
+      "a₁",
+      "b₁"
     ],
     [
       "a₂",
@@ -25,8 +26,8 @@ input_file: examples/sec-2-4-2.over
       "b₂"
     ],
     [
-      "a₁",
-      "b₁"
+      "a₂",
+      "b₂"
     ]
   ],
   "constraints": [

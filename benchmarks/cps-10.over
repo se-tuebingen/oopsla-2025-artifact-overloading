@@ -1,0 +1,15 @@
+// these are called 'f' in the paper
+assume addString: (String) => Int;
+assume addInt: (Int) => Int;
+
+// syntax sugar:
+// every time 'add' is seen, rewrite it into a fresh choice with `addString, addInt` as the alternatives 
+assume add = <addString, addInt>;
+
+assume callString: ∀(R). ((String) => R) => R;
+assume callInt: ∀(R). ((Int) => R) => R;
+
+assume compose: ∀(R). ((R) => R, (R) => R) => ((R) => R);
+
+call<callInt, callString>(compose(compose(compose(compose(compose(compose(compose(compose(compose(add, add), add), add), add), add), add), add), add), add))
+

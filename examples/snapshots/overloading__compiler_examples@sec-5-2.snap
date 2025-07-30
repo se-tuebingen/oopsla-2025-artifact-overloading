@@ -6,6 +6,7 @@ input_file: examples/sec-5-2.over
 {
   "status": "success",
   "expression": "if true then a‹0, \"\"› else \"hello\"",
+  "dimension_spans": "[spans]",
   "inferred_type": "if_0",
   "worlds": {
     "type": "many",
@@ -13,10 +14,10 @@ input_file: examples/sec-5-2.over
   },
   "solutions": [
     [
-      "a₂"
+      "a₁"
     ],
     [
-      "a₁"
+      "a₂"
     ]
   ],
   "constraints": [

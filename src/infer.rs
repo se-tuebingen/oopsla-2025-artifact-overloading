@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet};
 use std::fmt;
 
 use crate::syntax::{CVariable, Choices, Expr, TVariable, Type, Variable, meet, pretty_choices};
@@ -48,7 +48,7 @@ impl fmt::Display for Constraint {
 }
 
 // Bounded type for constraint solving
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Bounded {
     pub lower: HashSet<(Type, Choices)>,
     pub upper: HashSet<(Type, Choices)>,
@@ -84,8 +84,8 @@ fn format_bounds(bounds: &HashSet<(Type, Choices)>) -> String {
 impl Bounded {
     fn empty() -> Self {
         Bounded {
-            lower: HashSet::new(),
-            upper: HashSet::new(),
+            lower: HashSet::default(),
+            upper: HashSet::default(),
         }
     }
 
@@ -128,8 +128,8 @@ impl InferenceContext {
     pub fn new() -> Self {
         InferenceContext {
             var_counter: 0,
-            type_env: vec![HashMap::new()],
-            choice_env: vec![HashMap::new()],
+            type_env: vec![HashMap::default()],
+            choice_env: vec![HashMap::default()],
         }
     }
 
@@ -172,8 +172,8 @@ impl InferenceContext {
     }
 
     fn push_env(&mut self) {
-        self.type_env.push(HashMap::new());
-        self.choice_env.push(HashMap::new());
+        self.type_env.push(HashMap::default());
+        self.choice_env.push(HashMap::default());
     }
 
     fn pop_env(&mut self) {
@@ -212,9 +212,9 @@ impl InferenceContext {
             };
 
         let result_type = match e {
-            Expr::Var(x) => self.lookup(x)?,
+            Expr::Var(x, _) => self.lookup(x)?,
 
-            Expr::Lam(xs, body) => {
+            Expr::Lam(xs, body, _) => {
                 self.push_env();
                 let mut arg_types = Vec::new();
 
@@ -231,7 +231,7 @@ impl InferenceContext {
                 Type::TFun(arg_types, Box::new(return_type))
             }
 
-            Expr::App(f, args) => {
+            Expr::App(f, args, _) => {
                 let (callee_type, mut f_constraints) = self.infer(f)?;
                 constraints.append(&mut f_constraints);
 
@@ -253,7 +253,7 @@ impl InferenceContext {
                 result_type
             }
 
-            Expr::Let(x, binding, body) => {
+            Expr::Let(x, binding, body, _) => {
                 let (binding_type, mut binding_constraints) = self.infer(binding)?;
                 constraints.append(&mut binding_constraints);
 
@@ -266,7 +266,7 @@ impl InferenceContext {
                 body_type
             }
 
-            Expr::LetRec(x, binding, body) => {
+            Expr::LetRec(x, binding, body, _) => {
                 let tpe = self.fresh("rec");
 
                 self.push_env();
@@ -291,7 +291,7 @@ impl InferenceContext {
                 body_type
             }
 
-            Expr::Assume(x, typ, body) => {
+            Expr::Assume(x, typ, body, _) => {
                 self.bind_var(x.clone(), typ.clone());
                 self.push_env();
                 let (body_type, mut body_constraints) = self.infer(body)?;
@@ -301,7 +301,11 @@ impl InferenceContext {
                 body_type
             }
 
-            Expr::If(cond, thn, els) => {
+            Expr::AssumeOver(_, _, _, _) => {
+                return Err("AssumeOver should not be present after renaming".to_string());
+            }
+
+            Expr::If(cond, thn, els, _) => {
                 let result_type = self.fresh("if");
 
                 let (cond_type, mut cond_constraints) = self.infer(cond)?;
@@ -326,7 +330,7 @@ impl InferenceContext {
                 result_type
             }
 
-            Expr::Over(choice_var, exprs) => {
+            Expr::Over(choice_var, exprs, _) => {
                 let result_type = self.fresh(&format!("over_{}", choice_var));
 
                 for (i, expr) in exprs.iter().enumerate() {
@@ -348,10 +352,10 @@ impl InferenceContext {
                 result_type
             }
 
-            Expr::LitInt(_) => t_int(),
-            Expr::LitBool(_) => t_bool(),
-            Expr::LitString(_) => t_string(),
-            Expr::LitDouble(_) => t_double(),
+            Expr::LitInt(_, _) => t_int(),
+            Expr::LitBool(_, _) => t_bool(),
+            Expr::LitString(_, _) => t_string(),
+            Expr::LitDouble(_, _) => t_double(),
         };
 
         Ok((result_type, constraints))
@@ -373,8 +377,8 @@ impl Default for ConstraintSolver {
 impl ConstraintSolver {
     pub fn new() -> Self {
         ConstraintSolver {
-            seen: HashSet::new(),
-            bounds: HashMap::new(),
+            seen: HashSet::default(),
+            bounds: HashMap::default(),
         }
     }
 
@@ -449,11 +453,11 @@ impl ConstraintSolver {
             // Rule "UpperBound": we found that x <: u, that is `x` has an upper bound `u`.
             (Type::TVar(x), u) => {
                 // 1. For each lower bound `t` of `x`, we add a new constraint `t <: u` to ensure consistency.
-                let bounded = self.get_bounds_of(x).clone();
-                for (tpe, c) in bounded.lower {
+                let bounded = self.get_bounds_of(x);
+                for (tpe, c) in &bounded.lower {
                     new_constraints.push(Constraint::new(
-                        tpe,
-                        meet(&constraint.choices, &c),
+                        tpe.clone(),
+                        meet(&constraint.choices, c),
                         u.clone(),
                     ));
                 }
@@ -465,12 +469,12 @@ impl ConstraintSolver {
             // Rule "LowerBound": we found that l <: y, that is `l` has a lower bound `y`.
             (l, Type::TVar(y)) => {
                 // 1. For each upper bound `t` of `y`, we add a new constraint `l <: t` to ensure consistency.
-                let bounded = self.get_bounds_of(y).clone();
-                for (tpe, c) in bounded.upper {
+                let bounded = self.get_bounds_of(y);
+                for (tpe, c) in &bounded.upper {
                     new_constraints.push(Constraint::new(
                         l.clone(),
-                        meet(&constraint.choices, &c),
-                        tpe,
+                        meet(&constraint.choices, c),
+                        tpe.clone(),
                     ));
                 }
 
@@ -510,7 +514,7 @@ impl ConstraintSolver {
             }
         }
 
-        (self.bounds.clone(), errors)
+        (self.bounds, errors)
     }
 }
 
@@ -521,7 +525,7 @@ mod subst_tests {
     #[test]
     fn test_substitution_with_your_types() {
         // Test simple variable substitution
-        let mut subst = HashMap::new();
+        let mut subst = HashMap::default();
         subst.insert("a".to_string(), Type::TBase("Int".to_string()));
 
         let original = Type::TVar("a".to_string());
@@ -642,12 +646,15 @@ mod infer_tests {
             "id".to_string(),
             Box::new(Expr::Lam(
                 vec!["x".to_string()],
-                Box::new(Expr::Var("x".to_string())),
+                Box::new(Expr::Var("x".to_string(), Span::zero())),
+                Span::zero(),
             )),
             Box::new(Expr::App(
-                Box::new(Expr::Var("id".to_string())),
-                vec![Expr::LitInt(42)],
+                Box::new(Expr::Var("id".to_string(), Span::zero())),
+                vec![Expr::LitInt(42, Span::zero())],
+                Span::zero(),
             )),
+            Span::zero(),
         );
 
         let (result_type, constraints) = ctx.infer(&expr).expect("Inference failed");
@@ -666,7 +673,7 @@ mod infer_tests {
             constraints[0].to,
             Type::TFun(
                 vec![Type::TBase("Int".to_string())],
-                Box::new(Type::TVar("app_1".to_string()))
+                Box::new(Type::TVar("app_1".to_string())),
             )
         );
 

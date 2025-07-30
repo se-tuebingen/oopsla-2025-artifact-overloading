@@ -1,0 +1,154 @@
+// Enlarged example translated from Swift: https://danielchasehooper.com/posts/why-swift-is-slow/
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+assume addDouble: (Double, Double) => Double;
+assume addDoubleInt: (Double, Int) => Double;
+assume addIntDouble: (Int, Double) => Double;
+assume add = <addInt, addString, addDouble, addDoubleInt, addIntDouble>;
+
+// Network configuration
+let subdomain = "api" in
+let domain = "example" in
+let tld = "com" in
+let port = 8443 in // !!!
+let basePath = "/v2" in
+let service = "users" in
+let endpoint = "profile" in
+
+// Authentication
+let authType = "Bearer" in
+let tokenPrefix = "jwt_" in
+let tokenMiddle = "secure_token_" in
+let tokenSuffix = "abc123" in
+let apiKey = "key_" in
+let apiSecret = "secret_value_" in
+let clientId = "client_" in
+let clientSecret = "super_secret_" in
+
+// User data
+let userId = 12345 in // !!!
+let username = "john_doe" in
+let firstName = "John" in
+let lastName = "Doe" in
+let email = "john.doe" in
+let emailDomain = "company.com" in
+let department = "engineering" in
+let team = "backend" in
+let role = "senior" in
+let level = "staff" in
+
+// Request parameters
+let format = "json" in
+let version = "v1" in
+let timestamp = "2024" in
+let month = "07" in
+let day = "18" in
+let separator = "-" in
+let timePrefix = "T" in
+let hour = "14" in
+let minute = "30" in
+let second = "00" in
+let timezone = "Z" in
+
+// Additional metadata
+let requestId = "req_" in
+let sessionId = "sess_" in
+let correlationId = "corr_" in
+let traceId = "trace_" in
+let spanId = "span_" in
+let userAgent = "SwiftClient" in
+let clientVersion = "1.0.0" in
+let platform = "iOS" in
+let osVersion = "17.0" in
+
+add("https://",
+  add(subdomain,
+    add(".",
+      add(domain,
+        add(".",
+          add(tld,
+            add(":",
+              add(port,  // This integer forces overload resolution complexity
+                add(basePath,
+                  add("/",
+                    add(service,
+                      add("/",
+                        add(endpoint,
+                          add("?user_id=",
+                            add(userId,  // Another integer to make it even more complex
+                              add("&username=",
+                                add(username,
+                                  add("&first_name=",
+                                    add(firstName,
+                                      add("&last_name=",
+                                        add(lastName,
+                                          add("&email=",
+                                            add(email,
+                                              add("@",
+                                                add(emailDomain,
+                                                  add("&department=",
+                                                    add(department,
+                                                      add("&team=",
+                                                        add(team,
+                                                          add("&role=",
+                                                            add(role,
+                                                              add("&level=",
+                                                                add(level,
+                                                                  add("&format=",
+                                                                    add(format,
+                                                                      add("&version=",
+                                                                        add(version,
+                                                                          add("&timestamp=",
+                                                                            add(timestamp,
+                                                                              add(separator,
+                                                                                add(month,
+                                                                                  add(separator,
+                                                                                    add(day,
+                                                                                      add(timePrefix,
+                                                                                        add(hour,
+                                                                                          add(":",
+                                                                                            add(minute,
+                                                                                              add(":",
+                                                                                                add(second,
+                                                                                                  add(timezone,
+                                                                                                    add("&request_id=",
+                                                                                                      add(requestId,
+                                                                                                        add("12345",
+                                                                                                          add("&session_id=",
+                                                                                                            add(sessionId,
+                                                                                                              add("67890",
+                                                                                                                add("&correlation_id=",
+                                                                                                                  add(correlationId,
+                                                                                                                    add("abcdef",
+                                                                                                                      add("&trace_id=",
+                                                                                                                        add(traceId,
+                                                                                                                          add("123abc",
+                                                                                                                            add("&span_id=",
+                                                                                                                              add(spanId,
+                                                                                                                                add("456def",
+                                                                                                                                  add("&user_agent=",
+                                                                                                                                    add(userAgent,
+                                                                                                                                      add("&client_version=",
+                                                                                                                                        add(clientVersion,
+                                                                                                                                          add("&platform=",
+                                                                                                                                            add(platform,
+                                                                                                                                              add("&os_version=",
+                                                                                                                                                add(osVersion,
+                                                                                                                                                  add("&auth_type=",
+                                                                                                                                                    add(authType,
+                                                                                                                                                      add("&token=",
+                                                                                                                                                        add(tokenPrefix,
+                                                                                                                                                          add(tokenMiddle,
+                                                                                                                                                            add(tokenSuffix,
+                                                                                                                                                              add("&api_key=",
+                                                                                                                                                                add(apiKey,
+                                                                                                                                                                  add("789xyz",
+                                                                                                                                                                    add("&api_secret=",
+                                                                                                                                                                      add(apiSecret,
+                                                                                                                                                                        add("secret123",
+                                                                                                                                                                          add("&client_id=",
+                                                                                                                                                                            add(clientId,
+                                                                                                                                                                              add("client789",
+                                                                                                                                                                                add("&client_secret=",
+                                                                                                                                                                                  add(clientSecret,
+                                                                                                                                                                                    "final_secret"))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))

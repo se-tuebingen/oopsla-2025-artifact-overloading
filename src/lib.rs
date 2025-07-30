@@ -1,9 +1,12 @@
-use std::collections::HashMap;
+use rustc_hash::FxHashMap as HashMap;
 
 #[macro_use]
 pub mod syntax;
 use crate::json::JsonProcessingResult;
-use crate::syntax::{Choices, Expr, TVariable, Type, pretty_choices};
+use crate::syntax::{CVariable, Choices, Expr, Span, TVariable, Type, pretty_choices};
+
+pub mod rename;
+use crate::rename::Renamer;
 
 pub mod infer;
 use crate::infer::{Bounded, Constraint, ConstraintSolver, InferenceContext, SolveError};
@@ -17,21 +20,32 @@ extern crate console_error_panic_hook;
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-#[cfg(feature = "wasm")]
-use crate::syntax::parse_expr;
-
 ////////////////////////
 
 /// The main runner of the compiler.
 /// It processes the expression, gathers constraints, solves them, and performs overload resolution.
-fn process_expr(expr: &Expr, get_all_solutions: bool) -> ProcessingResult {
+fn process_expr(expr: &Expr, get_all_solutions: bool, max_solutions: usize) -> ProcessingResult {
+    let (renamed_expr, choices, new_dimension_spans) =
+        time_it!("Renaming and gathering choices", {
+            let renamer = Renamer::new();
+            match renamer.rename_and_gather(expr.clone()) {
+                Ok((expr, choices, new_dimension_spans)) => (expr, choices, new_dimension_spans),
+                Err(err) => {
+                    return ProcessingResult::InferenceError(
+                        expr.clone(),
+                        format!("Failed to rename: {}", err),
+                    );
+                }
+            }
+        });
+
     let mut ctx = InferenceContext::new();
 
     let (tpe, constraints) = time_it!("Constraint gathering", {
-        match ctx.infer(expr) {
+        match ctx.infer(&renamed_expr) {
             Ok((tpe, constraints)) => (tpe, constraints),
             Err(e) => {
-                return ProcessingResult::InferenceError(expr.clone(), e);
+                return ProcessingResult::InferenceError(renamed_expr, e);
             }
         }
     });
@@ -41,29 +55,20 @@ fn process_expr(expr: &Expr, get_all_solutions: bool) -> ProcessingResult {
         solver.solve_all(constraints.clone())
     });
 
-    let choices = match expr.all_choices() {
-        Ok(choices) => choices,
-        Err(e) => {
-            return ProcessingResult::InferenceError(
-                expr.clone(),
-                format!("Failed to gather choices: {}", e),
-            );
-        }
-    };
-
     let (bdd, var_set, mapping, worlds) =
         time_it!("Overload resolution", { count_worlds(&choices, &errors) });
 
     let solutions = if get_all_solutions {
         time_it!("Getting all solutions", {
-            solutions(&bdd, &var_set, &mapping)
+            solutions(&bdd, &var_set, &mapping, max_solutions) // truncate to "only" first 2^16 solutions by default
         })
     } else {
         Vec::new()
     };
 
     ProcessingResult::AllOK(
-        expr.clone(),
+        renamed_expr,
+        new_dimension_spans,
         tpe,
         constraints,
         bounds,
@@ -73,9 +78,9 @@ fn process_expr(expr: &Expr, get_all_solutions: bool) -> ProcessingResult {
     )
 }
 
-pub fn compile_expr(expr: &Expr, short: bool) -> String {
+pub fn compile_expr(expr: &Expr, short: bool, max_solutions: usize) -> String {
     time_it!("Total compilation", {
-        let result = process_expr(expr, true);
+        let result = process_expr(expr, true, max_solutions);
         pretty_result(&result, /* print_details */ !short, true, false)
     })
 }
@@ -85,6 +90,7 @@ pub enum ProcessingResult {
     InferenceError(Expr, String),
     AllOK(
         Expr,
+        HashMap<Span, CVariable>,
         Type,
         Vec<Constraint>,
         HashMap<TVariable, Bounded>,
@@ -98,7 +104,7 @@ impl ProcessingResult {
     fn expr(&self) -> &Expr {
         match self {
             ProcessingResult::InferenceError(expr, _) => expr,
-            ProcessingResult::AllOK(expr, _, _, _, _, _, _) => expr,
+            ProcessingResult::AllOK(expr, _, _, _, _, _, _, _) => expr,
         }
     }
 }
@@ -123,7 +129,7 @@ fn pretty_result(
                 output.push_str(&format!("Inference error: {}", e))
             }
 
-            ProcessingResult::AllOK(_, tpe, constraints, bounds, _errors, worlds, solutions) => {
+            ProcessingResult::AllOK(_, _, tpe, constraints, bounds, _errors, worlds, solutions) => {
                 output.push_str(&format!("Inferred type: {}\n", tpe));
 
                 if print_details {
@@ -155,6 +161,15 @@ fn pretty_result(
 
                 if print_solutions && !solutions.is_empty() {
                     output.push_str("Solutions:\n");
+                    if let Worlds::Many(k) = worlds {
+                        if solutions.len() < *k as usize {
+                            output.push_str(&format!(
+                                "  (truncated to first {} solutions, but {} exist in total)\n",
+                                solutions.len(),
+                                k
+                            ));
+                        }
+                    }
                     for solution in solutions {
                         output.push_str(&format!("  {}\n", pretty_choices(solution)));
                     }
@@ -209,8 +224,15 @@ pub mod json {
     }
 
     #[derive(Serialize, Deserialize, Debug)]
+    pub struct JsonDimensionSpan {
+        pub span: Span,
+        pub variable: CVariable,
+    }
+
+    #[derive(Serialize, Deserialize, Debug)]
     pub struct JsonResult {
         pub expression: String,
+        pub dimension_spans: Vec<JsonDimensionSpan>,
         pub inferred_type: String,
         pub worlds: JsonWorlds,
         #[serde(skip_serializing_if = "Option::is_none")]
@@ -313,7 +335,24 @@ pub mod json {
                 expression: expr.pretty_print(80),
                 error: error.clone(),
             },
-            ProcessingResult::AllOK(expr, tpe, constraints, bounds, errors, worlds, solutions) => {
+            ProcessingResult::AllOK(
+                expr,
+                dimension_spans,
+                tpe,
+                constraints,
+                bounds,
+                errors,
+                worlds,
+                solutions,
+            ) => {
+                let json_dimension_spans: Vec<JsonDimensionSpan> = dimension_spans
+                    .iter()
+                    .map(|(span, var)| JsonDimensionSpan {
+                        span: *span,
+                        variable: var.clone(),
+                    })
+                    .collect();
+
                 let json_constraints: Vec<JsonConstraint> =
                     constraints.iter().map(JsonConstraint::from).collect();
 
@@ -352,6 +391,7 @@ pub mod json {
 
                 JsonProcessingResult::Success(JsonResult {
                     expression: expr.pretty_print(80),
+                    dimension_spans: json_dimension_spans,
                     inferred_type: tpe.to_string(),
                     constraints: json_constraints,
                     bounds: json_bounds,
@@ -383,16 +423,24 @@ pub mod json {
 }
 
 // Convenience function similar to compile_expr
-pub fn compile_expr_json_string(expr: &Expr, include_solutions: bool) -> String {
-    let json = compile_expr_json(expr, include_solutions);
+pub fn compile_expr_json_string(
+    expr: &Expr,
+    include_solutions: bool,
+    max_solutions: usize,
+) -> String {
+    let json = compile_expr_json(expr, include_solutions, max_solutions);
     match serde_json::to_string_pretty(&json) {
         Ok(json) => json,
         Err(e) => make_json_error(format!("Failed to serialize to JSON: {}", e)),
     }
 }
 
-pub fn compile_expr_json(expr: &Expr, include_solutions: bool) -> JsonProcessingResult {
-    let result = process_expr(expr, include_solutions);
+pub fn compile_expr_json(
+    expr: &Expr,
+    include_solutions: bool,
+    max_solutions: usize,
+) -> JsonProcessingResult {
+    let result = process_expr(expr, include_solutions, max_solutions);
 
     json::json_result(&result, include_solutions)
 }
@@ -409,9 +457,11 @@ pub fn wasm_parse_and_test(input: &str, print_solutions: bool) -> String {
     // I'm not convinced that the panic hook works correctly...
     console_error_panic_hook::set_once();
 
-    match parse_expr(input) {
-        Ok(expr) => std::panic::catch_unwind(|| compile_expr_json_string(&expr, print_solutions))
-            .unwrap_or_else(|_| make_json_error("Panic during compilation".to_string())),
+    match crate::syntax::parse_expr(input) {
+        Ok(expr) => {
+            std::panic::catch_unwind(|| compile_expr_json_string(&expr, print_solutions, 1 << 10))
+                .unwrap_or_else(|_| make_json_error("Panic during compilation".to_string()))
+        }
         Err(err) => {
             console_error!("Parse failed: {}", err);
             make_json_error(err.replace("<", "&lt;").replace(">", "&gt;"))

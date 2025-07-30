@@ -6,6 +6,7 @@ input_file: examples/sanity-id.over
 {
   "status": "success",
   "expression": "assume idPoly: ∀(T ). (T) => T\nassume idInt: (Int) => Int\nassume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nλ x => b‹addInt, addString›(x, a‹idPoly, idInt›(42)) => \n  b‹addInt, addString›(x, a‹idPoly, idInt›(42))",
+  "dimension_spans": "[spans]",
   "inferred_type": "(x_0) => app_5",
   "worlds": {
     "type": "many",
@@ -14,11 +15,11 @@ input_file: examples/sanity-id.over
   "solutions": [
     [
       "b₁",
-      "a₂"
+      "a₁"
     ],
     [
       "b₁",
-      "a₁"
+      "a₂"
     ]
   ],
   "constraints": [

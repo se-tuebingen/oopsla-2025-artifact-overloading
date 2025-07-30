@@ -6,6 +6,7 @@ input_file: examples/apply-no-overload.over
 {
   "status": "success",
   "expression": "assume apply: ∀(A, B ). ((A) => B) => (A) => B\nlet double = λ x => x => x\napply(double)(42)",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_4",
   "worlds": {
     "type": "one"

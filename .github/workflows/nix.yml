@@ -71,23 +71,6 @@ jobs:
           nix build .#wasm
           echo "WASM build completed successfully"
 
-      - name: "Running benchmarks..."
-        run: |
-          echo "Running benchmarks with --sizes 5..."
-          nix run .#benchmark -- --sizes 5
-          
-      - name: "Displaying benchmark results..."
-        run: |
-          echo "=== Benchmark Results ==="
-          if [ -f "benchmark_comparison.md" ]; then
-            cat benchmark_comparison.md
-          else
-            echo "Warning: benchmark_comparison.md not found"
-            echo "Available files:"
-            ls -la
-            exit 1
-          fi
-
       # Upload WASM build artifact for Pages deployment (only from Ubuntu to avoid duplication)
       - name: "Upload WASM build for Pages..."
         if: matrix.os == 'ubuntu-latest'

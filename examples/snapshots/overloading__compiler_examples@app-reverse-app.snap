@@ -6,6 +6,7 @@ input_file: examples/app-reverse-app.over
 {
   "status": "success",
   "expression": "assume succInt: (Int) => Int\nlet app = λ (f, x) => a‹f(x), x(f)›\napp(succInt, 42)",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_5",
   "worlds": {
     "type": "one"

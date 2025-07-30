@@ -1,0 +1,44 @@
+assume getX2i: (Vec2i) => Int;
+assume getY2i: (Vec2i) => Int;
+
+assume getX3i: (Vec3i) => Int;
+assume getY3i: (Vec3i) => Int;
+assume getZ3i: (Vec3i) => Int;
+
+assume getX2d: (Vec2d) => Double;
+assume getY2d: (Vec2d) => Double;
+
+assume getX3d: (Vec3d) => Double;
+assume getY3d: (Vec3d) => Double;
+assume getZ3d: (Vec3d) => Double;
+
+assume x = <getX2i, getX3i, getX2d, getX3d>;
+assume y = <getY2i, getY3i, getY2d, getY3d>;
+assume z = <getZ3i, getZ3d>;
+
+assume addI: (Int, Int) => Int;
+assume addD: (Double, Double) => Double;
+assume add = <addI, addD>;
+
+assume subI: (Int, Int) => Int;
+assume subD: (Double, Double) => Double;
+assume sub = <subI, subD>;
+
+assume sqr: (Double) => Double;
+
+assume powD: (Double, Int) => Double;
+assume powI: (Int, Int) => Int;
+assume pow = <powD, powI>;
+
+// "type annotation"
+assume anno: ((Vec3d, Vec3d) => Double) => ((Vec3d, Vec3d) => Double);
+
+let f = λ(p1, p2) =>
+  let dx = pow(sub(x(p1), x(p2)), 2);
+  let dy = pow(sub(y(p1), y(p2)), 2);
+  let dz = pow(sub(z(p1), z(p2)), 2);
+  sqr(add(dx, add(dy, dz)));
+ 
+// try replacing this with just `f` to see the "lateral" problem
+anno(f)
+
