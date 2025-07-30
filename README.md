@@ -224,6 +224,8 @@ or building the type-checker using `nix build .#native` and then running `result
 
 Note that the compiler prints both the output and the rough timing:
 ```
+$ result/bin/overloading examples/sec-1-1-1.over
+
 Parsing: 64.375µs
 Renaming and gathering choices: 15.583µs
 Constraint gathering: 27.5µs
