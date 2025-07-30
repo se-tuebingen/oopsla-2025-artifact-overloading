@@ -183,34 +183,37 @@
 
         };
 
-        # Benchmark script package
-        benchmarkPackage = pkgs.writeShellApplication {
-          name = "overloading-benchmark";
+        scaleBenchmarkPackage = pkgs.writeShellApplication {
+          name = "overloading-scale-benchmark";
 
           runtimeInputs = with pkgs; [
             python3
             hyperfine
-            swiftWrapper
+            python3Packages.matplotlib
+            python3Packages.pandas
+            python3Packages.numpy 
           ];
 
           text = ''
             set -e
 
-            if [ ! -f "bench.py" ]; then
-              echo "Error: bench.py not found in current directory"
-              echo "Please run this script from the directory containing bench.py"
+            if [ ! -f "bench-scale.py" ]; then
+              echo "Error: bench-scale.py not found in current directory"
+              echo "Please run this script from the directory containing bench-scale.py"
               exit 1
             fi
 
-            echo "Running overloading benchmarks..."
-            echo "Using Swift wrapper: ${swiftWrapper}/bin/swift-wrapper"
+            echo "Running parametric benchmarks..."
             echo "Using overloading binary: ${nativePackage}/bin/overloading"
             echo ""
 
-            python3 bench.py \
-              --over-cmd "${nativePackage}/bin/overloading {} --short" \
-              --swift-cmd "${swiftWrapper}/bin/swift-wrapper -typecheck {}" \
+            python3 bench-scale.py \
+              --interpreter-cmd "${nativePackage}/bin/overloading {} --short" \
               "$@"
+
+            echo "Drawing a plot..."
+            echo ""
+            ./bench-scale-plot.py results_scale.csv
           '';
         };
 
@@ -220,8 +223,8 @@
           native = nativePackage;
           wasm = wasmPackage;
           website = websiteServer;
-          benchmark = benchmarkPackage;
           perf-benchmark = perfBenchmarkPackage;
+          scale-benchmark = scaleBenchmarkPackage;
           swift-wrapper = swiftWrapper;
         };
 
@@ -242,7 +245,8 @@
             pkgs.python3
             pkgs.nodejs
 
-            benchmarkPackage
+            perfBenchmarkPackage
+            scaleBenchmarkPackage
             swiftWrapper
             websiteServer
           ];
@@ -256,9 +260,9 @@
             program = "${perfBenchmarkPackage}/bin/overloading-perf-benchmark";
           };
 
-          benchmark = {
+          scale-benchmark = {
             type = "app";
-            program = "${benchmarkPackage}/bin/overloading-benchmark";
+            program = "${scaleBenchmarkPackage}/bin/overloading-scale-benchmark";
           };
 
           website = {

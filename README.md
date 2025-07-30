@@ -13,7 +13,7 @@ This artifact consists of:
 - a prototype implementation of the calculus and the type inference pipeline (`.#native`),
 - a web UI where a reader can input a term in Variational Core and get the rendered resulting type, constraints, and bounds of the calculus,
 in addition to the result of overload resolution (`.#website`),
-- a benchmark comparing a single kind of program with overloads of growing size against Swift (`.#benchmark`),
+- a benchmark suite comparing performance against Swift (`#perf-benchmark`) plus a scalability analysis (`#scale-benchmark`),
 - and of a development environment for developing and testing the above.
 
 All of the above is packaged using _Nix_, the packaging is declared in [flake.nix](./flake.nix).
@@ -81,30 +81,33 @@ $ git clone git@github.com:se-tuebingen/oopsla-2025-artifact-overloading.git
 $ cd oopsla-2025-artifact-overloading
 ```
 
-#### 2. Try the benchmarking suite on a tiny input
+#### 2. Try the scaling benchmarking suite on a tiny input
 
 Next, run the following Nix command to fetch all necessary dependencies (around 4 GiB of disk space), build the "native" program (around 2 GiB of disk space), run a tiny benchmark, and see its results:
 ```
-$ nix run .#benchmark -- --sizes 5 10
-$ cat benchmark_comparison.md
+$ nix run .#scale-benchmark -- --n-values 5 10 --m-values 10
+$ cat results_scale.md
 ```
 
 This variant of the benchmark runs for about a second on our computer.
-You should see hyperfine output, the times should be roughly in units of milliseconds for `over` (this project) and in hundreds of milliseconds for `swift` (the Swift programming language equivalent).
+You should see hyperfine output, the times should be roughly the same for all `N=5_M=10_$` and the same for all `N=10_M=10_$` (in units of milliseconds).
 
-Please ignore the warning 'Command took less than 5 ms to complete.', but please, **do not ignore** if at this point some command failed,
+Please ignore the warning 'Command took less than 5 ms to complete.' if there is one, but please, **do not ignore** if at this point some command failed,
 for example if the benchmarking tool returned a warning 'Command terminated with non-zero exit code'.
 
 Finally, the `cat` command should show a Markdown-formatted table for easy overview. Here's an example:
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `over_size_5` | 3.6 ± 0.5 | 2.8 | 4.3 | 1.00 |
-| `swift_size_5` | 140.3 ± 2.2 | 138.1 | 143.4 | 39.32 ± 5.93 |
-| `over_size_10` | 4.3 ± 0.3 | 4.0 | 4.6 | 1.19 ± 0.19 |
-| `swift_size_10` | 314.9 ± 1.8 | 312.7 | 317.5 | 88.22 ± 13.25 |
+| `N=5_M=10_zero` | 4.0 ± 0.4 | 3.5 | 4.6 | 1.13 ± 0.11 |
+| `N=5_M=10_one` | 4.4 ± 2.6 | 3.4 | 11.9 | 1.25 ± 0.75 |
+| `N=5_M=10_many` | 3.5 ± 0.1 | 3.3 | 3.7 | 1.00 |
+| `N=10_M=10_zero` | 4.9 ± 0.1 | 4.6 | 5.1 | 1.38 ± 0.06 |
+| `N=10_M=10_one` | 4.9 ± 0.2 | 4.8 | 5.4 | 1.40 ± 0.07 |
+| `N=10_M=10_many` | 4.7 ± 0.2 | 4.6 | 5.1 | 1.34 ± 0.07 |
 
-The benchmark itself is described later in section [Benchmarking](#benchmarking).
+
+The benchmarks themselves are described later in section [Benchmarking](#benchmarking).
 
 #### 3. Try out the interactive website
 
@@ -142,10 +145,10 @@ You can find more details on how to use the website in the section [Exploring th
 
 ## Step by Step Instructions
 
-There are four main commands that you might want to run, all of them are described in more detail below or in other linked Markdown documents.
+There are five main commands that you might want to run, all of them are described in more detail below or in other linked Markdown documents.
 
 - `nix run .#website` to run the website server (recommended using instead of running the native binary for exploration and experimentation)
-- `nix run .#benchmark` to run the benchmark script
+- `nix run .#perf-benchmark` and `nix run .#scale-benchmark` to run benchmarking
 - `nix run .#native -- examples/arity.over` to run the CLI, native Rust binary (recommended for manual benchmarking) on an example
 - `nix develop` to open a new Nix development shell with all dependencies for development
 
@@ -166,6 +169,9 @@ We also provide a syntax cheat sheet in [SYNTAX_CHEATSHEET.md](./SYNTAX_CHEATSHE
 
 ### Benchmarking
 
+There are two different kinds of benchmarks in the paper:
+a performance comparison (`.#perf-benchmark`) and a scalability analysis (`.#scale-benchmark`).
+
 #### Performance Comparison with Swift (Section 5.1)
 
 In order to reproduce Figure 8 in Section 5.1, run the following command which benchmarks our implementation against Swift using Nix:
@@ -173,7 +179,7 @@ In order to reproduce Figure 8 in Section 5.1, run the following command which b
 $ nix run .#perf-benchmark
 ```
 
-The benchmark takes just a few minutes to run, its results are then available in `results_perf.{csv, md, json}`. The Markdown version of this file can be used to compare with Figure 8. For comparison, the Markdown table [data/results_perf_default.md](./data/results_perf_default.md) contains the values included the paper measured by the same script.
+The benchmark takes just a few minutes to run, its results are then available in `results_perf.{csv, md, json}`. The Markdown version of this file can be used to compare with Figure 8. For comparison, the Markdown table [data/results_perf_default.md](./data/results_perf_default.md) contains the values included the paper measured by the same script. It is OK to stop the script with Ctrl+C, intermediate results are still written to the respective files.
 
 Customization is possible by changing the `perfBenchmarkPackage` derivation in `flake.nix` that just calls the `hyperfine` tool.
 More specifically, it's possible to set the minimum number of runs `--min-runs` or `--warmup` , or even to remove/add a new benchmark.
@@ -183,55 +189,22 @@ Note that some Swift benchmarks (`uri-*`) fail, this is expected as Swift correc
 
 #### Scalability Analysis (Section 5.2)
 
-As of right now, there is only one small benchmark introduced in the rebuttal that compares our prototype against a similar program from Swift 5.8.
-**Warning:** We are planning to revise this section as part of the major revision, see section [Paper claims](#paper-claims) for more details.
-
-A small version of the program in Variational Core is available in `./examples/rebuttal-mini.over`.
-
-The program is, in pseudocode:
-```
-let add: Int => Int = ...
-let add: Str => Int = ...
-
-let call: ∀R. (Int => R) => R = ...
-let call: ∀R. (Str => R) => R = ...
-
-let compose: ∀R. (R => R, R => R) => (R => R) = ...
-
-print(call(bench))
-```
-
-where `bench` is, for `N = 2`: `compose(add, add)` and for larger `N` looks like: `compose(compose(..., add), add)`.
-Therefore, `N` counts the `add` operations. The program is in CPS in order to mimic return-type overloading, which is otherwise unavailable in Swift.
-The overload is always unambiguous, the correct solution can only ever use the `Int => Int` variant of `add`, since the `Str => Int` version cannot be composed.
-In our terminology, each add will be a choice `a<callInt, callStr>` of a fresh dimension `a`.
-
-The default benchmark can be run using Nix with the following commands:
+The default benchmark can be run using Nix with the following command:
 ```bash
-$ nix run .#benchmark
+$ nix run .#scale-benchmark
 ```
-By default, it uses sizes `N = 2, 4, ..., 16`, exactly as in the rebuttal.
-You can run it for any sizes (any `N`s) you want with `nix run .#benchmark -- --sizes 5 7`.
-You can also use `nix run .#benchmark -- --help` to see all available flags of the underlying `bench.py` script
+By default, it uses sizes `N = , 4, ..., 16`, exactly as in the rebuttal.
+You can run it for any sizes (any `N`s and `M`s) you want with `nix run .#scale-benchmark -- --n-values 5 10 --m-values 10 20`.
+You can also use `nix run .#scale-benchmark -- --help` to see all available flags of the underlying `bench-scale.py` script
 which uses `hyperfine` to do the actual measuring.
 
-Note that the Swift compiler is invoked in a mode which only type-checks in an attempt to eliminate other overhead.
-Furthermore, we only test for N ≤ 16 since the Swift compiler gives up after approximately 3.5 minutes with:
-
-> the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
-
 **Warning: Running the benchmark takes about 40 minutes.**
-You're free to interrupt it with `Ctrl+C`, you'll still get the (partial output), please note that skipping the last test, `swift_size_16`, saves 30 minutes.
-The output of the benchmark is located in `benchmark_comparison.{md, json}`. We recommend looking at the Markdown version of the output for a quick overview, disregarding the "baseline"
-which is nonsensical for our purposes.
+You're free to interrupt it with `Ctrl+C`, you'll still get the (partial output).
+The output of the benchmark is located in `results_scale.{csv, md}`. We recommend looking at the Markdown version of the output for a quick overview, disregarding the "baseline" which is nonsensical for our purposes.
 
-The Markdown version results for the full default run (plain `nix run .#benchmark`) is, as reported in the rebuttal, available in [data/benchmark_comparison_default.md](./data/benchmark_comparison_default.md).
-Whereas "Over" (the prototype in this artifact) grows very slowly with increasing `N` (still within the realm of single milliseconds), the "Swift" version grows very rapidly with increasing `N`, from hundreds of milliseconds to hundreds of thousands of milliseconds (i.e., minutes).
+Finally, the `bench-scale-plot.py` script is ran in order to produce a plot similar to the one in the paper in Figure 9, saved to in `results_scale.png`.
 
-If the reviewer only wants to run our prototype on `N = 50, 100` and not Swift, the command to be used is `nix run .#benchmark -- --sizes 50 100 --swift-cmd ':'`.
-(Although the `hyperfine` tool we use to benchmark will complain that the benchmark times for Swift are 0, this will work correctly.)
-
-_To reiterate, as a part of the major revision, we will be adding more benchmarks to the artifact at the later submission date (see section [Paper claims](#paper-claims))._
+The Markdown version results for the full default run (plain `nix run .#scale-benchmark`) is, as reported in the paper, available in [data/results_scale_default.md](./data/results_scale_default.md). Similarly for the plots, available in [data/results_scale_default.png](./data/results_scale_default.png)
 
 ## Reusability Guide
 
