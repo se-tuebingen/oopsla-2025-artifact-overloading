@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Essence of Overloading: Playground</title>
+    <title>The Simple Essence of Overloading: Playground</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
@@ -31,7 +31,7 @@
             border: 1px solid #e2e8f0;
             border-radius: 0.375rem;
             font-family: 'Fira Code', monospace;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .timing-info {
@@ -124,13 +124,24 @@
             white-space: nowrap;
             display: inline-block;
         }
+
+        .CodeMirror-hint {
+            background: #e9eff3;
+            color: #2d5f86;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            user-select: none;
+            pointer-events: auto;
+            position: relative;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-4xl font-bold text-center mb-8 text-blue-600">Simple Essence of Overloading: Playground</h1>
+    <div class="mx-auto px-4 py-6 max-w-none w-full" style="max-width: 95vw;">
+        <h1 class="text-3xl font-bold text-center mb-8 text-blue-600">The Simple Essence of Overloading: Playground</h1>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
             <!-- Input Panel -->
             <div class="bg-white rounded-lg shadow-md">
                 <div class="bg-blue-600 text-white p-4 rounded-t-lg">
@@ -154,12 +165,12 @@
                     </div>
                 </div>
 
-                <div class="p-4">
+                <div class="p-3">
                     <textarea id="editor" class="w-full" placeholder="Enter your code here..."></textarea>
                 </div>
 
                 <div class="bg-gray-50 p-4 rounded-b-lg border-t">
-                    <button id="runButton" class="bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded font-medium disabled:bg-gray-400 disabled:cursor-not-allowed">
+                    <button id="runButton" class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed">
                         Run Type-checking
                     </button>
                 </div>
@@ -171,7 +182,7 @@
                     <h2 class="text-lg font-semibold">Output</h2>
                 </div>
 
-                <div class="p-4">
+                <div class="p-3">
                     <div id="output">
                         <div class="text-gray-500 italic">Enter code to see compilation results...</div>
                     </div>
@@ -179,7 +190,7 @@
             </div>
         </div>
 
-        <div id="details-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div id="details-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-white rounded-lg shadow-md p-4">
                 <button id="toggle-constraints" class="w-full text-left font-semibold text-blue-600 focus:outline-none mb-2">
                     Constraints ▼
@@ -198,11 +209,11 @@
             </div>
         </div>
 
-        <div id="performance-container" class="bg-white rounded-lg shadow-md gap-6 mt-6">
+        <div id="performance-container" class="bg-white rounded-lg shadow-md gap-4 mt-4">
             <button id="toggle-errors" class="w-full text-left p-4 font-semibold text-blue-600 hover:bg-gray-50 focus:outline-none rounded-t-lg border-b">
                 Error Constraints ▼
             </button>
-            <div id="errors-content" class="hidden p-4">
+            <div id="errors-content" class="hidden p-3">
                 <!-- Error constraints will be inserted here -->
             </div>
         </div>
@@ -215,6 +226,7 @@
         let editor;
         let isWasmReady = false;
         let debounceTimer;
+        let inlayHints = [];
 
         // Load examples from JSON file
         let examples = [];
@@ -372,6 +384,37 @@
             return output;
         }
 
+        // Inlay hints functionality
+        function clearInlayHints() {
+            inlayHints.forEach(marker => marker.clear());
+            inlayHints = [];
+        }
+
+        function addInlayHints(dimensionSpans) {
+            clearInlayHints();
+
+            if (!dimensionSpans || !Array.isArray(dimensionSpans)) {
+                return;
+            }
+
+            dimensionSpans.forEach(span => {
+                const { variable, span: spanInfo } = span;
+                const doc = editor.getDoc();
+
+                // Create hint element for the dimension variable
+                const hintElement = document.createElement('span');
+                hintElement.className = 'CodeMirror-hint';
+                hintElement.textContent = variable;
+
+                // Position the hint at the start of the span
+                const marker = doc.setBookmark(
+                    { line: spanInfo.start.line - 1, ch: spanInfo.start.column - 1 },
+                    { widget: hintElement }
+                );
+                inlayHints.push(marker);
+            });
+        }
+
         function renderJsonOutput(jsonResult) {
             try {
                 const data = JSON.parse(jsonResult);
@@ -382,9 +425,16 @@
                     document.getElementById('constraints-content').innerHTML = renderConstraintsTable(data.constraints);
                     document.getElementById('errors-content').innerHTML = renderErrorsTable(data.errors);
                     document.getElementById('bounds-content').innerHTML = renderBoundsTable(data.bounds);
+
+                    // Add inlay hints for dimension spans
+                    if (data.dimension_spans) {
+                        addInlayHints(data.dimension_spans);
+                    }
+
                     return renderMainOutput(data);
                 } else {
-                    // Handle error case
+                    // Handle error case - clear inlay hints on error
+                    clearInlayHints();
                     document.getElementById('constraints-content').innerHTML = '<div class="text-red-500">Error occurred</div>';
                     document.getElementById('errors-content').innerHTML = '<div class="text-red-500">Error occurred</div>';
                     document.getElementById('bounds-content').innerHTML = '<div class="text-red-500">Error occurred</div>';
@@ -392,6 +442,8 @@
                     return `Error: ${data.error}${data.expression ? `\nExpression: ${data.expression}` : ''}`;
                 }
             } catch (error) {
+                // Handle parse error - clear inlay hints on error
+                clearInlayHints();
                 document.getElementById('constraints-content').innerHTML = '<div class="text-red-500">Failed to parse JSON</div>';
                 document.getElementById('errors-content').innerHTML = '<div class="text-red-500">Failed to parse JSON</div>';
                 document.getElementById('bounds-content').innerHTML = '<div class="text-red-500">Failed to parse JSON</div>';
@@ -458,6 +510,7 @@
 
         function runCompilation() {
             if (!isWasmReady) {
+                clearInlayHints();
                 document.getElementById('output').innerHTML =
                     '<div class="text-gray-500 italic">Loading WASM module...</div>';
                 return;
@@ -466,6 +519,7 @@
             const input = editor.getValue().trim();
 
             if (!input) {
+                clearInlayHints();
                 document.getElementById('output').innerHTML =
                     '<div class="text-gray-500 italic">Enter code to see compilation results...</div>';
                 return;
