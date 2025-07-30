@@ -1,0 +1,45 @@
+assume addIntInt: (Int, Int) => Int;
+assume addI8I8: (Int8, Int8) => Int8;
+assume addI16I16: (Int16, Int16) => Int16;
+assume addI32I32: (Int32, Int32) => Int32;
+assume addI64I64: (Int64, Int64) => Int64;
+assume addUIntUInt: (UInt, UInt) => UInt;
+assume addU8U8: (UInt8, UInt8) => UInt8;
+assume addU16U16: (UInt16, UInt16) => UInt16;
+assume addU32U32: (UInt32, UInt32) => UInt32;
+assume addU64U64: (UInt64, UInt64) => UInt64;
+assume addDoubleDouble: (Double, Double) => Double;
+
+assume add = <addIntInt, addI8I8, addI16I16, addI32I32, addI64I64, addUIntUInt, addU8U8, addU16U16, addU32U32, addU64U64, addDoubleDouble>;
+
+assume negateInt: (Int) => Int;
+assume negateI8: (Int8) => Int8;
+assume negateI16: (Int16) => Int16;
+assume negateI32: (Int32) => Int32;
+assume negateI64: (Int64) => Int64;
+assume negateUInt: (UInt) => Int;
+assume negateU8: (UInt8) => UInt8;
+assume negateU16: (UInt16) => UInt16;
+assume negateU32: (UInt32) => UInt32;
+assume negateU64: (UInt64) => UInt64;
+assume negateDouble: (Double) => Double;
+
+assume negate = <negateInt, negateI8, negateI16, negateI32, negateI64, negateUInt, negateU8, negateU16, negateU32, negateU64, negateDouble>;
+
+assume asInt: (Int) => Int;
+assume asInt8: (Int) => Int8;
+assume asInt16: (Int) => Int16;
+assume asInt32: (Int) => Int32;
+assume asInt64: (Int) => Int64;
+assume asUInt: (Int) => UInt;
+assume asUInt8: (Int) => UInt8;
+assume asUInt16: (Int) => UInt16;
+assume asUInt32: (Int) => UInt32;
+assume asUInt64: (Int) => UInt64;
+assume asDouble: (Int) => Double;
+
+assume as = <asInt, asInt8, asInt16, asInt32, asInt64, asUInt, asUInt8, asUInt16, asUInt32, asUInt64, asDouble>;
+
+assume doubleIdentity: (Double) => Double;
+
+doubleIdentity(add(negate(add(as(1), as(2))), add(negate(add(as(3), as(4))), as(5))))

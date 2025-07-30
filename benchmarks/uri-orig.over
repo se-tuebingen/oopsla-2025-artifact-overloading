@@ -1,0 +1,20 @@
+// Example translated from Swift: https://danielchasehooper.com/posts/why-swift-is-slow/
+assume addInt: (Int, Int) => Int;
+assume addString: (String, String) => String;
+assume addDouble: (Double, Double) => Double;
+assume add = <addInt, addString, addDouble>;
+
+let address = "127.0.0.1" in
+let username = "steve" in
+let password = "1234" in
+let channel = 11 in // change to "11" to fix the type error
+
+add("http://",
+  add(username,
+    add(":",
+      add(password,
+        add("@",
+          add(address,
+            add("/api/",
+              add(channel,
+                "/picture"))))))))

@@ -1,0 +1,13 @@
+// see cps-10 for more info
+assume addString: (String) => Int;
+assume addInt: (Int) => Int;
+
+assume add = <addString, addInt>;
+
+assume callString: ∀(R). ((String) => R) => R;
+assume callInt: ∀(R). ((Int) => R) => R;
+
+assume compose: ∀(R). ((R) => R, (R) => R) => ((R) => R);
+
+call<callInt, callString>(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(compose(add, add), add), add), add), add), add), add), add), add), add), add), add), add), add), add), add), add), add), add))
+

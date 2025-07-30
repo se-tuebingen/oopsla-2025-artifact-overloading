@@ -1,0 +1,43 @@
+// Originally from:
+// Lambda Expressions vs. Anonymous Methods, Part Five
+//   by Eric Lippert
+// https://learn.microsoft.com/en-us/archive/blogs/ericlippert/lambda-expressions-vs-anonymous-methods-part-five
+// Encoding 3-SAT using overloading!
+
+assume orTTT: (T, T, T) => T;
+assume orTTF: (T, T, F) => T;
+assume orTFT: (T, F, T) => T;
+assume orFTT: (F, T, T) => T;
+assume orTFF: (T, F, F) => T;
+assume orFTF: (F, T, F) => T;
+assume orFFT: (F, F, T) => T;
+assume orFFF: (F, F, F) => F;
+assume or = <orTTT, orTTF, orTFT, orFTT, orTFF, orFTF, orFFT, orFFF>;
+
+assume andTT: (T, T) => T;
+assume andTF: (T, F) => F;
+assume andFT: (F, T) => F;
+assume andFF: (F, F) => F;
+assume and = <andTT, andTF, andFT, andFF>;
+
+assume notT: T => F;
+assume notF: F => T;
+assume not = <notT, notF>;
+
+assume mustBeTrue: T => Unit;
+
+assume MT: (T => Unit) => Unit;
+assume MF: (F => Unit) => Unit;
+assume M = <MT, MF>;
+
+// (¬a ∨ ¬b ∨ ¬c) AND ( a ∨  b ∨ ¬c) AND ( a ∨ ¬b ∨  c) AND (¬a ∨  b ∨  c) AND (¬a ∨  ¬b ∨  c) AND (a ∨  ¬b ∨  ¬c) AND (¬a ∨  b ∨  ¬c)
+M(λ(a) => M(λ(b) => M(λ(c) =>
+  mustBeTrue(
+      and(or(not(a), not(b), not(c)),
+        and(or(a, b, not(c)),
+          and(or(a, not(b), c),
+            and(or(not(a), b, c),
+              and(or(not(a), not(b), c),
+                and(or(a, not(b), not(c)),
+                     or(not(a), b, not(c)))))))))
+)))
