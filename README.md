@@ -193,7 +193,7 @@ The default benchmark can be run using Nix with the following command:
 ```bash
 $ nix run .#scale-benchmark
 ```
-By default, it uses sizes `N = , 4, ..., 16`, exactly as in the rebuttal.
+By default, it uses sizes `M = 10 25 50 75 100` and `N = 10 50 100 150 20`, exactly as in the paper.
 You can run it for any sizes (any `N`s and `M`s) you want with `nix run .#scale-benchmark -- --n-values 5 10 --m-values 10 20`.
 You can also use `nix run .#scale-benchmark -- --help` to see all available flags of the underlying `bench-scale.py` script
 which uses `hyperfine` to do the actual measuring.
@@ -216,10 +216,7 @@ In order to write more programs in Variational Core, we highly recommend the rea
 
 ### Writing and running more benchmarks
 
-Currently, our benchmark suite is hardcoded for the one program from the rebuttal and it's nontrivial to update it.
-Since we'll be adding more examples as a part of the _Major Revision_, this section will include more relevant details after the revision.
-
-Nevertheless, you can run single programs using `nix run .#native -- $PROGRAM`,
+You can run single programs using `nix run .#native -- $PROGRAM`,
 or building the type-checker using `nix build .#native` and then running `result/bin/overloading $PROGRAM`.
 
 Note that the compiler prints both the output and the rough timing:
