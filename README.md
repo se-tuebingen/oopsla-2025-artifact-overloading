@@ -28,12 +28,8 @@ The paper makes the following claims:
     - **Supported:** The prototype implementation in the artifact demonstrates constraint collection, solving, and overload resolution with clear phase separation as formalized in the paper. However, operational semantics and program specialization are **not** implemented, as we consider these to be routine transformations that do not demonstrate the novel contributions of the paper. Note that we also do not provide machine-checked proofs of these claims.
 3. Our approach avoids typical problems of backtracking implementations through type-directed overload resolution with clear phase separation (Section 4).
     - **Supported:** The artifact demonstrates this through the prototype implementation, which uses the variational framework to avoid backtracking during overload resolution in a modular fashion, cleanly separating out overload resolution from constraint gathering and solving.
-4. We discuss the complexity of overload resolution (Section 4.3) and claim that overload resolution is often resolvable efficiently in practice (Section 4.3.1).
-   - **Partially supported, revision planned:** The artifact includes one benchmark comparing our prototype against Swift 5.8, showing significant performance advantages for programs with growing overload complexity. However, both the claim in Section 4.3.1 and comprehensive evaluation across a wide range of examples are planned for the major revision.
-5. **From rebuttal:** The performance and usability of our approach is viable in practice.
-    - **Partially supported, revision planned:** This is currently only demonstrated through the single benchmark showing our prototype scales much better than Swift for the tested family of programs, and through the interactive web interface demonstrating usability. Comprehensive evaluation is planned for the major revision.
-
-**Note on Major Revision:** Following the major revision verdict, claims 4 and 5 will be strengthened with comprehensive evaluation and practical validation of assumptions in Section 4.3.1. The current artifact demonstrates the core contributions; expanded evaluation will follow in similar packaging.
+4. The performance and usability of our approach is viable in practice. (Section 5)
+    - **Supported:** This is currently demonstrated through the performance benchmarks against Swift and through the scaling benchmarks, and through the interactive web interface demonstrating usability.
 
 ## Hardware Dependencies
 
@@ -238,16 +234,14 @@ or building the type-checker using `nix build .#native` and then running `result
 
 Note that the compiler prints both the output and the rough timing:
 ```
-$ result/bin/overloading examples/sec-1-1-1.over
-
-Parsing: 107.459µs
-Constraint gathering: 18.167µs
-Constraint solving: 16µs
-Overload resolution: 9.333µs
-Getting all solutions: 1.125µs
-Prettifying the output: 7.75µs
-Total compilation: 73.167µs
-
+Parsing: 64.375µs
+Renaming and gathering choices: 15.583µs
+Constraint gathering: 27.5µs
+Constraint solving: 21.041µs
+Overload resolution: 3.667µs
+Getting all solutions: 833ns
+Prettifying the output: 21.5µs
+Total compilation: 110.916µs
 Inferred type: app_1
 Constraints:
   (Int, Int) => Int <:^a₁ over_a_0
