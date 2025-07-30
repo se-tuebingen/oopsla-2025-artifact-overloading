@@ -6,6 +6,7 @@ input_file: examples/recursion.over
 {
   "status": "success",
   "expression": "assume emptyD: (Double) => Bool\nassume emptyI: (Int) => Bool\nassume emptyS: (String) => Bool\nassume addS: (String, String) => String\nassume addD: (Double, Double) => Double\nassume addI: (Int, Int) => Int\nassume subD: (Double, Double) => Double\nassume subI: (Int, Int) => Int\nassume myShowStr: (String) => String\nlet rec myShowInt = λ n => let empty = e‹emptyD, emptyI, emptyS›\nlet show = s‹myShowInt, myShowStr›\nlet add = a‹addD, addI, addS›\nlet sub = m‹subD, subI›\nif empty(n) then \"\" else add(\"|\", show(sub(n, 1))) => \n  let empty = e‹emptyD, emptyI, emptyS›\n  let show = s‹myShowInt, myShowStr›\n  let add = a‹addD, addI, addS›\n  let sub = m‹subD, subI›\n  if empty(n) then \"\" else add(\"|\", show(sub(n, 1)))\nmyShowInt",
+  "dimension_spans": "[spans]",
   "inferred_type": "rec_0",
   "worlds": {
     "type": "one"

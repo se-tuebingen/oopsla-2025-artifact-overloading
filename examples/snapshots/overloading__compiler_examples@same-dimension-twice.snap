@@ -6,6 +6,7 @@ input_file: examples/same-dimension-twice.over
 {
   "status": "success",
   "expression": "assume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nλ x => let add_b = a‹addInt, addString›\nlet inner = add_b(x, x)\nlet add_a = a‹addInt, addString›\nadd_a(0, inner) => \n  let add_b = a‹addInt, addString›\n  let inner = add_b(x, x)\n  let add_a = a‹addInt, addString›\n  add_a(0, inner)",
+  "dimension_spans": "[spans]",
   "inferred_type": "(x_0) => app_4",
   "worlds": {
     "type": "one"

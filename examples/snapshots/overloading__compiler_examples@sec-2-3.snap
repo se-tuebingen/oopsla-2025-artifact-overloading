@@ -6,6 +6,7 @@ input_file: examples/sec-2-3.over
 {
   "status": "success",
   "expression": "assume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nλ x => let add_a = a‹addInt, addString›\nlet fst = add_a(x, 2)\nlet add_b = b‹addInt, addString›\nlet snd = add_b(fst, \"3\")\nsnd => \n  let add_a = a‹addInt, addString›\n  let fst = add_a(x, 2)\n  let add_b = b‹addInt, addString›\n  let snd = add_b(fst, \"3\")\n  snd",
+  "dimension_spans": "[spans]",
   "inferred_type": "(x_0) => app_4",
   "worlds": {
     "type": "no"

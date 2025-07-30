@@ -6,6 +6,7 @@ input_file: examples/arity.over
 {
   "status": "success",
   "expression": "assume add1: (Int) => Int\nassume add2: (Int, Int) => Int\nassume add3: (Int, Int, Int) => Int\nassume add4: (Int, Int, Int, Int) => Int\nlet add_a = a‹add1, add2, add3, add4›\nlet _ = add_a(1, 2, 3)\nlet add_b = b‹add1, add2, add3, add4›\nadd_b(4, 5)",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_3",
   "worlds": {
     "type": "one"

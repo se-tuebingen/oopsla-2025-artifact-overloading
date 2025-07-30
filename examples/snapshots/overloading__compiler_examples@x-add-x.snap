@@ -6,12 +6,28 @@ input_file: examples/x-add-x.over
 {
   "status": "success",
   "expression": "assume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nassume addDouble: (Double, Double) => Double\nλ x => a1‹addDouble, addInt, addString›(\n  a2‹addDouble, addInt, addString›(\n    a3‹addDouble, addInt, addString›(\n      a4‹addDouble, addInt, addString›(\n        a5‹addDouble, addInt, addString›(\n          a6‹addDouble, addInt, addString›(\n            a7‹addDouble, addInt, addString›(\n              a8‹addDouble, addInt, addString›(\n                a9‹addDouble, addInt, addString›(\n                  a10‹addDouble, addInt, addString›(\n                    a11‹addDouble, addInt, addString›(\n                      a12‹addDouble, addInt, addString›(\n                        a13‹addDouble, addInt, addString›(x, x),\n                        x\n                      ),\n                      x\n                    ),\n                    x\n                  ),\n                  x\n                ),\n                x\n              ),\n              x\n            ),\n            x\n          ),\n          x\n        ),\n        x\n      ),\n      x\n    ),\n    x\n  ),\n  x\n) => \n  a1‹addDouble, addInt, addString›(\n    a2‹addDouble, addInt, addString›(\n      a3‹addDouble, addInt, addString›(\n        a4‹addDouble, addInt, addString›(\n          a5‹addDouble, addInt, addString›(\n            a6‹addDouble, addInt, addString›(\n              a7‹addDouble, addInt, addString›(\n                a8‹addDouble, addInt, addString›(\n                  a9‹addDouble, addInt, addString›(\n                    a10‹addDouble, addInt, addString›(\n                      a11‹addDouble, addInt, addString›(\n                        a12‹addDouble, addInt, addString›(\n                          a13‹addDouble, addInt, addString›(x, x),\n                          x\n                        ),\n                        x\n                      ),\n                      x\n                    ),\n                    x\n                  ),\n                  x\n                ),\n                x\n              ),\n              x\n            ),\n            x\n          ),\n          x\n        ),\n        x\n      ),\n      x\n    ),\n    x\n  )",
+  "dimension_spans": "[spans]",
   "inferred_type": "(x_0) => app_26",
   "worlds": {
     "type": "many",
     "count": 3.0
   },
   "solutions": [
+    [
+      "a1₁",
+      "a2₁",
+      "a3₁",
+      "a4₁",
+      "a5₁",
+      "a6₁",
+      "a7₁",
+      "a8₁",
+      "a9₁",
+      "a10₁",
+      "a11₁",
+      "a12₁",
+      "a13₁"
+    ],
     [
       "a1₃",
       "a2₃",
@@ -41,21 +57,6 @@ input_file: examples/x-add-x.over
       "a11₂",
       "a12₂",
       "a13₂"
-    ],
-    [
-      "a1₁",
-      "a2₁",
-      "a3₁",
-      "a4₁",
-      "a5₁",
-      "a6₁",
-      "a7₁",
-      "a8₁",
-      "a9₁",
-      "a10₁",
-      "a11₁",
-      "a12₁",
-      "a13₁"
     ]
   ],
   "constraints": [

@@ -6,6 +6,7 @@ input_file: examples/sec-4-3-1.over
 {
   "status": "success",
   "expression": "assume addInt: (Int, Int) => Int\nassume addDouble: (Double, Double) => Double\nassume printInt: (Int) => Unit\nassume printString: (String) => Unit\nlet add1 = a‹addInt, addDouble›\nlet print1 = b‹printInt, printString›\nlet add2 = c‹addInt, addDouble›\nlet print2 = d‹printInt, printString›\nlet _r1 = print1(add1(1, 2))\nprint2(add2(3, 4))",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_7",
   "worlds": {
     "type": "one"

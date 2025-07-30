@@ -6,6 +6,7 @@ input_file: examples/super-higher-order.over
 {
   "status": "success",
   "expression": "let defaultInt = 0\nlet defaultString = \"\"\nλ f => let id = λ x => x => x\nlet default = a‹defaultInt, defaultString›\nlet apply = b‹f, id›\napply(default) => \n  let id = λ x => x => x\n  let default = a‹defaultInt, defaultString›\n  let apply = b‹f, id›\n  apply(default)",
+  "dimension_spans": "[spans]",
   "inferred_type": "(f_0) => app_4",
   "worlds": {
     "type": "many",
@@ -13,8 +14,8 @@ input_file: examples/super-higher-order.over
   },
   "solutions": [
     [
-      "a₂",
-      "b₂"
+      "a₁",
+      "b₁"
     ],
     [
       "a₂",
@@ -25,8 +26,8 @@ input_file: examples/super-higher-order.over
       "b₂"
     ],
     [
-      "a₁",
-      "b₁"
+      "a₂",
+      "b₂"
     ]
   ],
   "constraints": [

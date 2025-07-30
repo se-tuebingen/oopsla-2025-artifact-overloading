@@ -6,6 +6,7 @@ input_file: examples/sec-2-2.over
 {
   "status": "success",
   "expression": "assume readInt: (String) => Int\nassume readDouble: (String) => Double\nassume showInt: (Int) => String\nassume showDouble: (Double) => String\nassume showString: (String) => String\nλ str => let read = a‹readInt, readDouble›\nlet value = read(str)\nlet show = b‹showInt, showDouble, showString›\nshow(value) => \n  let read = a‹readInt, readDouble›\n  let value = read(str)\n  let show = b‹showInt, showDouble, showString›\n  show(value)",
+  "dimension_spans": "[spans]",
   "inferred_type": "(str_0) => app_4",
   "worlds": {
     "type": "many",
@@ -13,12 +14,12 @@ input_file: examples/sec-2-2.over
   },
   "solutions": [
     [
-      "a₂",
-      "b₂"
-    ],
-    [
       "a₁",
       "b₁"
+    ],
+    [
+      "a₂",
+      "b₂"
     ]
   ],
   "constraints": [

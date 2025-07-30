@@ -46,6 +46,10 @@ Also contains timing macros and WASM compatibility shims.
 
 **Architecture Invariant**: Choice operators `a<expr1, expr2, ...>` are first-class syntax constructs, making overloading explicit in the AST.
 
+### `src/rename.rs`
+
+Gathering choices, renaming anonymous choices and `assume` synonyms.
+
 ### `src/infer.rs`
 
 Constraint gathering and constraint solving.

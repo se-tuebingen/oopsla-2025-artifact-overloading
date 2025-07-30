@@ -6,6 +6,7 @@ input_file: examples/apply-add-one-lambda.over
 {
   "status": "success",
   "expression": "assume apply: ∀(A, B ). ((A) => B) => (A) => B\nassume addOneI: (Int) => Int\nassume addOneS: (String) => String\nassume addOneD: (Double) => Double\nlet addOne = a‹addOneI, addOneS, addOneD›\nλ x => apply(addOne)(x) => apply(addOne)(x)",
+  "dimension_spans": "[spans]",
   "inferred_type": "(x_1) => app_5",
   "worlds": {
     "type": "many",
@@ -13,13 +14,13 @@ input_file: examples/apply-add-one-lambda.over
   },
   "solutions": [
     [
+      "a₁"
+    ],
+    [
       "a₃"
     ],
     [
       "a₂"
-    ],
-    [
-      "a₁"
     ]
   ],
   "constraints": [

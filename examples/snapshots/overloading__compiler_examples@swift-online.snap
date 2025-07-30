@@ -6,6 +6,7 @@ input_file: examples/swift-online.over
 {
   "status": "success",
   "expression": "assume addInt: (Int, Int) => Int\nassume addString: (String, String) => String\nassume addDouble: (Double, Double) => Double\nlet address = \"127.0.0.1\"\nlet username = \"steve\"\nlet password = \"1234\"\nlet channel = 11\na‹addString, addInt, addDouble›(\n  \"http://\",\n  b‹addString, addInt, addDouble›(\n    username,\n    c‹addString, addInt, addDouble›(\n      \":\",\n      d‹addString, addInt, addDouble›(\n        password,\n        e‹addString, addInt, addDouble›(\n          \"@\",\n          f‹addString, addInt, addDouble›(\n            address,\n            g‹addString, addInt, addDouble›(\n              \"/api/\",\n              h‹addString, addInt, addDouble›(channel, \"/picture\")\n            )\n          )\n        )\n      )\n    )\n  )\n)",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_15",
   "worlds": {
     "type": "no"

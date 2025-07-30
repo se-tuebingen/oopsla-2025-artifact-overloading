@@ -46,12 +46,71 @@ macro_rules! time_it {
 
 ///////////////////////////////////////////////////////////////
 
+// Position and span information
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(serde::Deserialize, serde::Serialize)]
+pub struct Position {
+    pub offset: usize,
+    pub line: u32,
+    pub column: u32,
+}
+
+impl Position {
+    pub fn new(offset: usize, line: u32, column: u32) -> Self {
+        Self { offset, line, column }
+    }
+
+    pub fn zero() -> Self {
+        Self { offset: 0, line: 1, column: 1 }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(serde::Deserialize, serde::Serialize)]
+pub struct Span {
+    pub start: Position,
+    pub end: Position,
+}
+
+impl Span {
+    pub fn new(start: Position, end: Position) -> Self {
+        Self { start, end }
+    }
+
+    pub fn zero() -> Self {
+        Self { start: Position::zero(), end: Position::zero() }
+    }
+
+    pub fn extend(&self, other: Span) -> Span {
+        Span {
+            start: self.start,
+            end: other.end,
+        }
+    }
+}
+
+impl std::fmt::Display for Position {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}", self.line, self.column)
+    }
+}
+
+impl std::fmt::Display for Span {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.start.line == self.end.line {
+            write!(f, "{}:{}-{}", self.start.line, self.start.column, self.end.column)
+        } else {
+            write!(f, "{}-{}", self.start, self.end)
+        }
+    }
+}
+
 // Type aliases
 pub type CVariable = String;
 pub type Variable = String;
 pub type TVariable = String;
 
-// Choices type
+// Choices type with spans
 pub type Choices = Vec<(CVariable, usize)>;
 
 // Computes the meet of two sets of choices.
@@ -63,7 +122,7 @@ pub fn meet(c1: &Choices, c2: &Choices) -> Choices {
 }
 
 fn nub(mut list: Choices) -> Choices {
-    let mut seen = HashSet::new();
+    let mut seen = HashSet::default();
     list.retain(|(var, num)| seen.insert((var.clone(), *num)));
     list
 }
@@ -82,9 +141,9 @@ mod choices_tests {
         ];
         choices = nub(choices);
         assert_eq!(choices.len(), 3);
-        assert!(choices.contains(&("a".to_string(), 1)));
-        assert!(choices.contains(&("b".to_string(), 2)));
-        assert!(choices.contains(&("c".to_string(), 3)));
+        assert!(choices.iter().any(|(var, num)| var == "a" && *num == 1));
+        assert!(choices.iter().any(|(var, num)| var == "b" && *num == 2));
+        assert!(choices.iter().any(|(var, num)| var == "c" && *num == 3));
     }
 
     #[test]
@@ -92,8 +151,8 @@ mod choices_tests {
         let mut choices = vec![("a".to_string(), 1), ("a".to_string(), 2)];
         choices = nub(choices);
         assert_eq!(choices.len(), 2);
-        assert!(choices.contains(&("a".to_string(), 1)));
-        assert!(choices.contains(&("a".to_string(), 2)));
+        assert!(choices.iter().any(|(var, num)| var == "a" && *num == 1));
+        assert!(choices.iter().any(|(var, num)| var == "a" && *num == 2));
     }
 
     #[test]
@@ -102,9 +161,9 @@ mod choices_tests {
         let c2 = vec![("b".to_string(), 2), ("c".to_string(), 3)];
         let result = meet(&c1, &c2);
         assert_eq!(result.len(), 3);
-        assert!(result.contains(&("a".to_string(), 1)));
-        assert!(result.contains(&("b".to_string(), 2)));
-        assert!(result.contains(&("c".to_string(), 3)));
+        assert!(result.iter().any(|(var, num)| var == "a" && *num == 1));
+        assert!(result.iter().any(|(var, num)| var == "b" && *num == 2));
+        assert!(result.iter().any(|(var, num)| var == "c" && *num == 3));
     }
 }
 
@@ -151,24 +210,68 @@ pub fn parse_expr(input: &str) -> Result<Expr, String> {
     })
 }
 
-// Expression AST
+// Expression AST with spans
 #[derive(Debug, Clone)]
 pub enum Expr {
-    Var(Variable),
-    Lam(Vec<Variable>, Box<Expr>),
-    App(Box<Expr>, Vec<Expr>),
-    Let(Variable, Box<Expr>, Box<Expr>),
-    LetRec(Variable, Box<Expr>, Box<Expr>),
-    Assume(Variable, Type, Box<Expr>),
-    If(Box<Expr>, Box<Expr>, Box<Expr>),
-    Over(CVariable, Vec<Expr>),
-    LitInt(i64),
-    LitBool(bool),
-    LitString(String),
-    LitDouble(f64),
+    Var(Variable, Span),
+    Lam(Vec<Variable>, Box<Expr>, Span),
+    App(Box<Expr>, Vec<Expr>, Span),
+    Let(Variable, Box<Expr>, Box<Expr>, Span),
+    LetRec(Variable, Box<Expr>, Box<Expr>, Span),
+    Assume(Variable, Type, Box<Expr>, Span),
+    AssumeOver(Variable, Box<Expr>, Box<Expr>, Span),
+    If(Box<Expr>, Box<Expr>, Box<Expr>, Span),
+    Over(CVariable, Vec<Expr>, Span),
+
+    // literals
+    LitInt(i64, Span),
+    LitBool(bool, Span),
+    LitString(String, Span),
+    LitDouble(f64, Span),
 }
 
-use std::collections::{HashMap, HashSet};
+impl Expr {
+    pub fn span(&self) -> Span {
+        match self {
+            Expr::Var(_, span) => *span,
+            Expr::Lam(_, _, span) => *span,
+            Expr::App(_, _, span) => *span,
+            Expr::Let(_, _, _, span) => *span,
+            Expr::LetRec(_, _, _, span) => *span,
+            Expr::Assume(_, _, _, span) => *span,
+            Expr::AssumeOver(_, _, _, span) => *span,
+            Expr::If(_, _, _, span) => *span,
+            Expr::Over(_, _, span) => *span,
+            Expr::LitInt(_, span) => *span,
+            Expr::LitBool(_, span) => *span,
+            Expr::LitString(_, span) => *span,
+            Expr::LitDouble(_, span) => *span,
+        }
+    }
+
+    pub fn with_span(mut self, new_span: Span) -> Self {
+        match &mut self {
+            Expr::Var(_, span) => *span = new_span,
+            Expr::Lam(_, _, span) => *span = new_span,
+            Expr::App(_, _, span) => *span = new_span,
+            Expr::Let(_, _, _, span) => *span = new_span,
+            Expr::LetRec(_, _, _, span) => *span = new_span,
+            Expr::Assume(_, _, _, span) => *span = new_span,
+            Expr::AssumeOver(_, _, _, span) => *span = new_span,
+            Expr::If(_, _, _, span) => *span = new_span,
+            Expr::Over(_, _, span) => *span = new_span,
+            Expr::LitInt(_, span) => *span = new_span,
+            Expr::LitBool(_, span) => *span = new_span,
+            Expr::LitString(_, span) => *span = new_span,
+            Expr::LitDouble(_, span) => *span = new_span,
+        }
+        self
+    }
+
+
+}
+
+use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet};
 use std::fmt;
 
 use pretty::RcDoc;
@@ -188,9 +291,9 @@ impl Expr {
 
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Expr::Var(x) => RcDoc::text(x.clone()),
+            Expr::Var(x, _) => RcDoc::text(x.clone()),
 
-            Expr::Lam(xs, body) => {
+            Expr::Lam(xs, body, _) => {
                 let params = if xs.len() == 1 {
                     RcDoc::text(format!("λ {} => ", xs[0])).append(body.to_doc())
                 } else {
@@ -207,7 +310,7 @@ impl Expr {
                 )
             }
 
-            Expr::App(f, args) => {
+            Expr::App(f, args, _) => {
                 if args.is_empty() {
                     return f.to_doc().append("()");
                 }
@@ -232,21 +335,28 @@ impl Expr {
                 )
             }
 
-            Expr::Let(x, binding, body) => RcDoc::text(format!("let {} = ", x))
+            Expr::Let(x, binding, body, _) => RcDoc::text(format!("let {} = ", x))
                 .append(binding.to_doc())
                 .append(RcDoc::hardline())
                 .append(body.to_doc()),
 
-            Expr::LetRec(x, binding, body) => RcDoc::text(format!("let rec {} = ", x))
+            Expr::LetRec(x, binding, body, _) => RcDoc::text(format!("let rec {} = ", x))
                 .append(binding.to_doc())
                 .append(RcDoc::hardline())
                 .append(body.to_doc()),
 
-            Expr::Assume(name, typ, body) => RcDoc::text(format!("assume {}: {}", name, typ))
+            Expr::Assume(name, typ, body, _) => RcDoc::text(format!("assume {}: {}", name, typ))
                 .append(RcDoc::hardline())
                 .append(body.to_doc()),
 
-            Expr::If(cond, thn, els) => RcDoc::group(
+            Expr::AssumeOver(name, over, body, _) => {
+                RcDoc::text(format!("assume {} = ", name))
+                    .append(over.to_doc())
+                    .append(RcDoc::hardline())
+                    .append(body.to_doc())
+            }
+
+            Expr::If(cond, thn, els, _) => RcDoc::group(
                 RcDoc::text("if ")
                     .append(cond.to_doc())
                     .append(RcDoc::text(" then"))
@@ -256,7 +366,7 @@ impl Expr {
                     .append(RcDoc::line().append(els.to_doc()).nest(2)),
             ),
 
-            Expr::Over(choice_var, exprs) => {
+            Expr::Over(choice_var, exprs, _) => {
                 let exprs_docs: Vec<RcDoc<()>> = exprs.iter().map(|e| e.to_doc()).collect();
                 let exprs_doc =
                     RcDoc::intersperse(exprs_docs, RcDoc::text(",").append(RcDoc::line()));
@@ -274,10 +384,10 @@ impl Expr {
                 )
             }
 
-            Expr::LitInt(n) => RcDoc::text(n.to_string()),
-            Expr::LitBool(b) => RcDoc::text(b.to_string()),
-            Expr::LitString(s) => RcDoc::text(format!("\"{}\"", s)),
-            Expr::LitDouble(d) => RcDoc::text(d.to_string()),
+            Expr::LitInt(n, _) => RcDoc::text(n.to_string()),
+            Expr::LitBool(b, _) => RcDoc::text(b.to_string()),
+            Expr::LitString(s, _) => RcDoc::text(format!("\"{}\"", s)),
+            Expr::LitDouble(d, _) => RcDoc::text(d.to_string()),
         }
     }
 
@@ -286,7 +396,7 @@ impl Expr {
         self.collect_choices(&mut choices);
 
         // Ensure no duplicates in the result
-        let mut seen = HashMap::new();
+        let mut seen = HashMap::default();
         let mut result: Choices = Vec::new();
         for (cvar, n) in &choices {
             match seen.insert(cvar.clone(), *n) {
@@ -306,31 +416,35 @@ impl Expr {
 
     pub fn collect_choices(&self, choices: &mut Choices) {
         match self {
-            Expr::Var(_)
-            | Expr::LitInt(_)
-            | Expr::LitBool(_)
-            | Expr::LitString(_)
-            | Expr::LitDouble(_) => {}
-            Expr::Lam(_, body) => body.collect_choices(choices),
-            Expr::App(f, args) => {
+            Expr::Var(_, _)
+            | Expr::LitInt(_, _)
+            | Expr::LitBool(_, _)
+            | Expr::LitString(_, _)
+            | Expr::LitDouble(_, _) => {}
+            Expr::Lam(_, body, _) => body.collect_choices(choices),
+            Expr::App(f, args, _) => {
                 f.collect_choices(choices);
                 for arg in args {
                     arg.collect_choices(choices);
                 }
             }
-            Expr::Let(_, binding, body) | Expr::LetRec(_, binding, body) => {
+            Expr::Let(_, binding, body, _) | Expr::LetRec(_, binding, body, _) => {
                 binding.collect_choices(choices);
                 body.collect_choices(choices);
             }
-            Expr::Assume(_, _, body) => {
+            Expr::Assume(_, _, body, _) => {
                 body.collect_choices(choices);
             }
-            Expr::If(cond, thn, els) => {
+            Expr::AssumeOver(_, _, body, _) => {
+                // TODO: Should be resolved by the renamer now?
+                body.collect_choices(choices);
+            }
+            Expr::If(cond, thn, els, _) => {
                 cond.collect_choices(choices);
                 thn.collect_choices(choices);
                 els.collect_choices(choices);
             }
-            Expr::Over(choice_var, exprs) => {
+            Expr::Over(choice_var, exprs, _span) => {
                 choices.push((choice_var.clone(), exprs.len()));
                 for expr in exprs {
                     expr.collect_choices(choices);
@@ -340,7 +454,7 @@ impl Expr {
     }
 }
 
-// Type system
+// Type system with spans
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Type {
     TBase(String),
@@ -348,7 +462,6 @@ pub enum Type {
     TVar(TVariable),
     TScheme(Vec<TVariable>, Box<Type>),
 }
-
 impl fmt::Display for Type {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -417,7 +530,7 @@ impl Type {
 /// Parser submodule for expressions and types.
 /// Use `parse_expr` defined in the super-module to parse expressions.
 mod parser {
-    use super::{Expr, Type};
+    use super::{Expr, Type, Position};
     use nom::{
         IResult,
         branch::alt,
@@ -427,21 +540,62 @@ mod parser {
         multi::{many0, separated_list0, separated_list1},
         sequence::{delimited, pair, tuple},
     };
+    use nom_locate::LocatedSpan;
+
+    // Use nom_locate for automatic position tracking
+    pub type Span<'a> = LocatedSpan<&'a str>;
+
+    // Convert nom_locate span to our Span type
+    fn to_span(start: Span, end: Span) -> super::Span {
+        let start_pos = Position::new(
+            start.location_offset(),
+            start.location_line(),
+            start.get_utf8_column() as u32,
+        );
+        let end_pos = Position::new(
+            end.location_offset(),
+            end.location_line(),
+            end.get_utf8_column() as u32,
+        );
+        super::Span::new(start_pos, end_pos)
+    }
+
+    // Helper to create a spanned parser
+    fn spanned<'a, F, O>(
+        mut parser: F,
+    ) -> impl FnMut(Span<'a>) -> IResult<Span<'a>, (O, super::Span)>
+    where
+        F: FnMut(Span<'a>) -> IResult<Span<'a>, O>,
+    {
+        move |input: Span<'a>| {
+            let start = input;
+            let (remaining, result) = parser(input)?;
+            let span = to_span(start, remaining);
+            Ok((remaining, (result, span)))
+        }
+    }
 
     // Type parser - entry point that allows schemes
     pub fn type_parser(input: &str) -> IResult<&str, Type> {
+        let span_input = Span::new(input);
+        let (remaining, result) = type_parser_span(span_input)
+            .map_err(|e| e.map(|e| nom::error::Error::new(input, e.code)))?;
+        Ok((remaining.fragment(), result))
+    }
+
+    fn type_parser_span(input: Span) -> IResult<Span, Type> {
         ws(alt((forall_type, monotype_parser)))(input)
     }
 
     // Monotype parser - no schemes allowed (for use inside forall bodies)
-    fn monotype_parser(input: &str) -> IResult<&str, Type> {
+    fn monotype_parser(input: Span) -> IResult<Span, Type> {
         ws(alt((function_type, atomic_type)))(input)
     }
 
     // Function type: (Type, Type, ...) => Type or Type => Type (no schemes in args or result)
-    fn function_type(input: &str) -> IResult<&str, Type> {
+    fn function_type(input: Span) -> IResult<Span, Type> {
         map(
-            tuple((
+            spanned(tuple((
                 ws(alt((
                     // Multiple types or empty: (Type1, Type2, ...) or ()
                     delimited(
@@ -454,15 +608,15 @@ mod parser {
                 ))),
                 ws(tag("=>")),
                 ws(monotype_parser),
-            )),
-            |(args, _, result)| Type::TFun(args, Box::new(result)),
+            ))),
+            |((args, _, result), _span)| Type::TFun(args, Box::new(result)),
         )(input)
     }
 
     // Forall type: ∀(A, B, ...) . Type or ∀A . Type or forall(A, B, ...) . Type or forall A . Type
-    fn forall_type(input: &str) -> IResult<&str, Type> {
+    fn forall_type(input: Span) -> IResult<Span, Type> {
         map(
-            tuple((
+            spanned(tuple((
                 ws(alt((tag("∀"), tag("forall")))),
                 ws(alt((
                     // Multiple variables or empty: (A, B, ...) or ()
@@ -476,8 +630,8 @@ mod parser {
                 ))),
                 ws(char('.')),
                 ws(monotype_parser), // Use monotype_parser to prevent nested schemes
-            )),
-            |(_, vars, _, body)| {
+            ))),
+            |((_, vars, _, body), _span)| {
                 let resolved_body = resolve_type_vars(&body, &vars.iter().collect());
                 Type::TScheme(vars, Box::new(resolved_body))
             },
@@ -485,12 +639,12 @@ mod parser {
     }
 
     // Atomic type: base types or parenthesized monotypes
-    fn atomic_type(input: &str) -> IResult<&str, Type> {
+    fn atomic_type(input: Span) -> IResult<Span, Type> {
         ws(alt((base_type, parenthesized_type)))(input)
     }
 
     // Parenthesized type - only allows monotypes to prevent nested schemes
-    fn parenthesized_type(input: &str) -> IResult<&str, Type> {
+    fn parenthesized_type(input: Span) -> IResult<Span, Type> {
         ws(delimited(char('('), monotype_parser, char(')')))(input)
     }
 
@@ -527,12 +681,21 @@ mod parser {
     }
 
     // Base type: Int, String, Bool, Double, etc.
-    fn base_type(input: &str) -> IResult<&str, Type> {
-        map(ws(identifier), Type::TBase)(input)
+    fn base_type(input: Span) -> IResult<Span, Type> {
+        map(spanned(ws(identifier)), |(name, _span)| {
+            Type::TBase(name)
+        })(input)
     }
 
     // Main expression parser
     pub fn expr_parser(input: &str) -> IResult<&str, Expr> {
+        let span_input = Span::new(input);
+        let (remaining, result) = expr_parser_span(span_input)
+            .map_err(|e| e.map(|e| nom::error::Error::new(input, e.code)))?;
+        Ok((remaining.fragment(), result))
+    }
+
+    fn expr_parser_span(input: Span) -> IResult<Span, Expr> {
         ws(alt((
             if_expr,
             let_expr,
@@ -544,91 +707,122 @@ mod parser {
     }
 
     // Whitespace wrapper (incl. line comments)
-    fn ws<'a, F, O>(inner: F) -> impl FnMut(&'a str) -> IResult<&'a str, O>
+    fn ws<'a, F, O>(inner: F) -> impl FnMut(Span<'a>) -> IResult<Span<'a>, O>
     where
-        F: FnMut(&'a str) -> IResult<&'a str, O>,
+        F: FnMut(Span<'a>) -> IResult<Span<'a>, O>,
     {
         delimited(ws_and_comments, inner, ws_and_comments)
     }
 
     // Whitespace and comments
-    fn ws_and_comments(input: &str) -> IResult<&str, ()> {
+    fn ws_and_comments(input: Span) -> IResult<Span, ()> {
         value((), many0(alt((value((), multispace1), line_comment))))(input)
     }
 
     // Line comment: // ... until end of line (based on nom recipes)
-    fn line_comment(input: &str) -> IResult<&str, ()> {
+    fn line_comment(input: Span) -> IResult<Span, ()> {
         value((), pair(tag("//"), is_not("\n\r")))(input)
     }
 
     // If expression: if EXPR then EXPR else EXPR
-    fn if_expr(input: &str) -> IResult<&str, Expr> {
+    fn if_expr(input: Span) -> IResult<Span, Expr> {
         map(
-            tuple((
+            spanned(tuple((
                 ws(tag("if")),
-                expr_parser,
+                expr_parser_span,
                 ws(tag("then")),
-                expr_parser,
+                expr_parser_span,
                 ws(tag("else")),
-                expr_parser,
-            )),
-            |(_, cond, _, thn, _, els)| Expr::If(Box::new(cond), Box::new(thn), Box::new(els)),
+                expr_parser_span,
+            ))),
+            |((_, cond, _, thn, _, els), span)| {
+                Expr::If(Box::new(cond), Box::new(thn), Box::new(els), span)
+            },
         )(input)
     }
 
     // Let expression: let VAR = EXPR in EXPR or let VAR = EXPR; EXPR
-    fn let_expr(input: &str) -> IResult<&str, Expr> {
+    fn let_expr(input: Span) -> IResult<Span, Expr> {
         map(
-            tuple((
+            spanned(tuple((
                 ws(tag("let")),
                 ws(identifier),
                 ws(char('=')),
-                expr_parser,
+                expr_parser_span,
                 ws(alt((tag("in"), tag(";")))),
-                expr_parser,
-            )),
-            |(_, var, _, binding, _, body)| Expr::Let(var, Box::new(binding), Box::new(body)),
+                expr_parser_span,
+            ))),
+            |((_, var, _, binding, _, body), span)| {
+                Expr::Let(var, Box::new(binding), Box::new(body), span)
+            },
         )(input)
     }
 
     // Let rec expression: let rec VAR = EXPR in EXPR or let rec VAR = EXPR; EXPR
-    fn letrec_expr(input: &str) -> IResult<&str, Expr> {
+    fn letrec_expr(input: Span) -> IResult<Span, Expr> {
         map(
-            tuple((
+            spanned(tuple((
                 ws(tag("let")),
                 ws(tag("rec")),
                 ws(identifier),
                 ws(char('=')),
-                expr_parser,
+                expr_parser_span,
                 ws(alt((tag("in"), tag(";")))),
-                expr_parser,
-            )),
-            |(_, _, var, _, binding, _, body)| Expr::LetRec(var, Box::new(binding), Box::new(body)),
+                expr_parser_span,
+            ))),
+            |((_, _, var, _, binding, _, body), span)| {
+                Expr::LetRec(var, Box::new(binding), Box::new(body), span)
+            },
         )(input)
     }
 
+    use nom::combinator::cut;
+
     // Assume statement: assume NAME: TYPE in EXPR or assume NAME: TYPE; EXPR
-    fn assume_expr(input: &str) -> IResult<&str, Expr> {
-        map(
-            tuple((
-                ws(tag("assume")),
-                ws(identifier),
-                ws(char(':')),
-                ws(type_parser),
-                ws(alt((tag("in"), tag(";")))),
-                expr_parser,
-            )),
-            |(_, name, _, typ, _, expr)| Expr::Assume(name, typ, Box::new(expr)),
-        )(input)
+    // + Assume overload statement: assume NAME = OVER in EXPR or assume NAME = OVER; EXPR
+    fn assume_expr(input: Span) -> IResult<Span, Expr> {
+        let (input, _) = ws(tag("assume"))(input)?;
+        let (input, name) = ws(identifier)(input)?;
+
+        alt((
+            // assume NAME: TYPE - commit after seeing ':'
+            map(
+                spanned(tuple((
+                    ws(char(':')),
+                    cut(tuple((
+                        ws(type_parser_span),
+                        ws(alt((tag("in"), tag(";")))),
+                        expr_parser_span,
+                    ))),
+                ))),
+                |((_, (typ, _, expr)), span)| {
+                    Expr::Assume(name.clone(), typ, Box::new(expr), span)
+                },
+            ),
+            // assume NAME = OVER - commit after seeing '='
+            map(
+                spanned(tuple((
+                    ws(char('=')),
+                    cut(tuple((
+                        ws(over_expr),
+                        ws(alt((tag("in"), tag(";")))),
+                        expr_parser_span,
+                    ))),
+                ))),
+                |((_, (over, _, expr)), span)| {
+                    Expr::AssumeOver(name.clone(), Box::new(over), Box::new(expr), span)
+                },
+            ),
+        ))(input)
     }
 
     // Lambda expression:
     //    λ (VAR, VAR, ...) => EXPR or λ VAR => EXPR
     // or \(VAR, VAR, ...) => EXPR or \VAR => EXPR
     // or fun (VAR, VAR, ...) => EXPR or fun VAR => EXPR
-    fn lambda_expr(input: &str) -> IResult<&str, Expr> {
+    fn lambda_expr(input: Span) -> IResult<Span, Expr> {
         map(
-            tuple((
+            spanned(tuple((
                 ws(alt((tag("λ"), tag("\\"), tag("fun")))),
                 ws(alt((
                     // Multiple parameters or empty: (param1, param2, ...) or ()
@@ -641,14 +835,14 @@ mod parser {
                     map(identifier, |param| vec![param]),
                 ))),
                 ws(tag("=>")),
-                expr_parser,
-            )),
-            |(_, params, _, body)| Expr::Lam(params, Box::new(body)),
+                expr_parser_span,
+            ))),
+            |((_, params, _, body), span)| Expr::Lam(params, Box::new(body), span),
         )(input)
     }
 
     // Application or atomic expression - handles chained applications like f(x)(y)
-    fn app_or_atom(input: &str) -> IResult<&str, Expr> {
+    fn app_or_atom(input: Span) -> IResult<Span, Expr> {
         let (mut input, mut expr) = ws(atom_expr)(input)?;
 
         // Parse as many function applications as possible
@@ -656,18 +850,26 @@ mod parser {
             // Try to parse function application
             let app_result = opt(ws(delimited(
                 char('('),
-                separated_list0(ws(char(',')), expr_parser),
+                separated_list0(ws(char(',')), expr_parser_span),
                 char(')'),
             )))(input);
 
             match app_result {
                 Ok((remaining, Some(args))) if !args.is_empty() => {
-                    expr = Expr::App(Box::new(expr), args);
+                    let span = to_span(
+                        Span::new_extra(input.fragment(), input.extra),
+                        remaining,
+                    );
+                    expr = Expr::App(Box::new(expr), args, span);
                     input = remaining;
                 }
                 Ok((remaining, Some(_))) => {
                     // Empty args case - treat as unit application
-                    expr = Expr::App(Box::new(expr), vec![]);
+                    let span = to_span(
+                        Span::new_extra(input.fragment(), input.extra),
+                        remaining,
+                    );
+                    expr = Expr::App(Box::new(expr), vec![], span);
                     input = remaining;
                 }
                 _ => break, // No more applications found
@@ -678,7 +880,7 @@ mod parser {
     }
 
     // Atomic expressions
-    fn atom_expr(input: &str) -> IResult<&str, Expr> {
+    fn atom_expr(input: Span) -> IResult<Span, Expr> {
         ws(alt((
             over_expr,
             parenthesized_expr,
@@ -690,80 +892,88 @@ mod parser {
     }
 
     // Over expression: CVAR<EXPR, EXPR, ...>
-    fn over_expr(input: &str) -> IResult<&str, Expr> {
+    fn over_expr(input: Span) -> IResult<Span, Expr> {
         map(
-            tuple((
-                ws(identifier), // This will be the choice variable
+            spanned(tuple((
+                ws(opt_identifier), // This will be the choice variable or an empty string
                 ws(delimited(
                     alt((tag("<"), tag("‹"))), // Allow '‹' for web target to avoid HTML parsing issues
-                    separated_list1(ws(char(',')), expr_parser),
+                    separated_list1(ws(char(',')), expr_parser_span),
                     alt((tag(">"), tag("›"))), // Allow '›' for web target to avoid HTML parsing issues
                 )),
-            )),
-            |(cvar, exprs)| Expr::Over(cvar, exprs),
+            ))),
+            |((cvar, exprs), span)| Expr::Over(cvar, exprs, span),
         )(input)
     }
 
     // Parenthesized expression
-    fn parenthesized_expr(input: &str) -> IResult<&str, Expr> {
-        ws(delimited(char('('), expr_parser, char(')')))(input)
+    fn parenthesized_expr(input: Span) -> IResult<Span, Expr> {
+        ws(delimited(char('('), expr_parser_span, char(')')))(input)
     }
 
     // Variable
-    fn var_expr(input: &str) -> IResult<&str, Expr> {
-        map(ws(identifier), Expr::Var)(input)
+    fn var_expr(input: Span) -> IResult<Span, Expr> {
+        map(spanned(ws(identifier)), |(name, span)| Expr::Var(name, span))(input)
     }
 
     // Literals
-    fn lit_bool(input: &str) -> IResult<&str, Expr> {
-        ws(alt((
-            value(Expr::LitBool(true), tag("true")),
-            value(Expr::LitBool(false), tag("false")),
-        )))(input)
-    }
-
-    fn lit_number(input: &str) -> IResult<&str, Expr> {
-        let (input, s) = ws(recognize(tuple((
-            opt(char('-')),
-            digit1,
-            opt(tuple((char('.'), digit1))),
-        ))))(input)?;
-
-        if s.contains('.') {
-            match s.parse::<f64>() {
-                Ok(value) => Ok((input, Expr::LitDouble(value))),
-                Err(_) => Err(nom::Err::Error(nom::error::Error::new(
-                    input,
-                    nom::error::ErrorKind::TooLarge,
-                ))),
-            }
-        } else {
-            match s.parse::<i64>() {
-                Ok(value) => Ok((input, Expr::LitInt(value))),
-                Err(_) => Err(nom::Err::Error(nom::error::Error::new(
-                    input,
-                    nom::error::ErrorKind::TooLarge,
-                ))),
-            }
-        }
-    }
-
-    fn lit_string(input: &str) -> IResult<&str, Expr> {
+    fn lit_bool(input: Span) -> IResult<Span, Expr> {
         map(
-            ws(delimited(char('"'), take_until("\""), char('"'))),
-            |s: &str| Expr::LitString(s.to_string()),
+            spanned(ws(alt((
+                value(true, tag("true")),
+                value(false, tag("false")),
+            )))),
+            |(value, span)| Expr::LitBool(value, span),
         )(input)
+    }
+
+    fn lit_number(input: Span) -> IResult<Span, Expr> {
+        map(
+            spanned(ws(recognize(tuple((
+                opt(char('-')),
+                digit1,
+                opt(tuple((char('.'), digit1))),
+            ))))),
+            |(s, span)| {
+                if s.contains('.') {
+                    match s.parse::<f64>() {
+                        Ok(value) => Expr::LitDouble(value, span),
+                        Err(_) => panic!("Failed to parse double: {}", s),
+                    }
+                } else {
+                    match s.parse::<i64>() {
+                        Ok(value) => Expr::LitInt(value, span),
+                        Err(_) => panic!("Failed to parse int: {}", s),
+                    }
+                }
+            },
+        )(input)
+    }
+
+    fn lit_string(input: Span) -> IResult<Span, Expr> {
+        map(
+            spanned(ws(delimited(char('"'), take_until("\""), char('"')))),
+            |(s, span)| Expr::LitString(s.to_string(), span),
+        )(input)
+    }
+
+    fn is_identifier(input: Span) -> IResult<Span, Span> {
+        recognize(pair(
+            alt((alpha1, tag("_"))),
+            many0(alt((alphanumeric1, tag("_")))),
+        ))(input)
     }
 
     // Identifier (for variables and choice variables)
-    fn identifier(input: &str) -> IResult<&str, String> {
-        map(
-            recognize(pair(
-                alt((alpha1, tag("_"))),
-                many0(alt((alphanumeric1, tag("_")))),
-            )),
-            |s: &str| s.to_string(),
-        )(input)
+    fn identifier(input: Span) -> IResult<Span, String> {
+        map(is_identifier, |s: Span| s.fragment().to_string())(input)
+    }
+
+    // Optional identifier - returns empty string if no identifier is found
+    fn opt_identifier(input: Span) -> IResult<Span, String> {
+        map(opt(is_identifier), |opt_id| {
+            opt_id.map_or("".to_string(), |id| id.fragment().to_string())
+        })(input)
     }
 }
 
@@ -773,76 +983,85 @@ mod tests {
 
     #[test]
     fn test_literals() {
-        assert!(matches!(parse_expr("42"), Ok(Expr::LitInt(42))));
-        assert!(matches!(parse_expr("-42"), Ok(Expr::LitInt(-42))));
-        assert!(matches!(parse_expr("3.41"), Ok(Expr::LitDouble(3.41))));
-        assert!(matches!(parse_expr("-3.41"), Ok(Expr::LitDouble(-3.41))));
-        assert!(matches!(parse_expr("0.001"), Ok(Expr::LitDouble(0.001))));
-        assert!(matches!(parse_expr("-0.001"), Ok(Expr::LitDouble(-0.001))));
-        assert!(matches!(parse_expr("0.0"), Ok(Expr::LitDouble(0.0))));
-        assert!(matches!(parse_expr("-0.0"), Ok(Expr::LitDouble(-0.0))));
-        assert!(matches!(parse_expr("0"), Ok(Expr::LitInt(0))));
-        assert!(matches!(parse_expr("-0"), Ok(Expr::LitInt(0))));
+        assert!(matches!(parse_expr("42"), Ok(Expr::LitInt(42, _))));
+        assert!(matches!(parse_expr("-42"), Ok(Expr::LitInt(-42, _))));
+        assert!(matches!(parse_expr("3.41"), Ok(Expr::LitDouble(3.41, _))));
+        assert!(matches!(parse_expr("-3.41"), Ok(Expr::LitDouble(-3.41, _))));
+        assert!(matches!(parse_expr("0.001"), Ok(Expr::LitDouble(0.001, _))));
+        assert!(matches!(parse_expr("-0.001"), Ok(Expr::LitDouble(-0.001, _))));
+        assert!(matches!(parse_expr("0.0"), Ok(Expr::LitDouble(0.0, _))));
+        assert!(matches!(parse_expr("-0.0"), Ok(Expr::LitDouble(-0.0, _))));
+        assert!(matches!(parse_expr("0"), Ok(Expr::LitInt(0, _))));
+        assert!(matches!(parse_expr("-0"), Ok(Expr::LitInt(0, _))));
         assert!(parse_expr(".0").is_err());
         assert!(parse_expr("0.").is_err());
 
-        assert!(matches!(parse_expr("true"), Ok(Expr::LitBool(true))));
-        assert!(matches!(parse_expr("false"), Ok(Expr::LitBool(false))));
-        assert!(matches!(parse_expr("\"hello\""), Ok(Expr::LitString(_))));
+        assert!(matches!(parse_expr("true"), Ok(Expr::LitBool(true, _))));
+        assert!(matches!(parse_expr("false"), Ok(Expr::LitBool(false, _))));
+        assert!(matches!(parse_expr("\"hello\""), Ok(Expr::LitString(_, _))));
     }
 
     #[test]
     fn test_variables() {
-        assert!(matches!(parse_expr("x"), Ok(Expr::Var(_))));
-        assert!(matches!(parse_expr("foo_bar"), Ok(Expr::Var(_))));
+        assert!(matches!(parse_expr("x"), Ok(Expr::Var(_, _))));
+        assert!(matches!(parse_expr("foo_bar"), Ok(Expr::Var(_, _))));
     }
 
     #[test]
     fn test_over() {
         let result = parse_expr("choice<1, 2, 3>");
-        assert!(matches!(result, Ok(Expr::Over(_, _))));
+        assert!(matches!(result, Ok(Expr::Over(_, _, _))));
+
+        let anon = parse_expr("<1, 2>");
+        assert!(matches!(anon, Ok(Expr::Over(_, _, _))));
+
+        let bad = parse_expr("1<1, 2>");
+        assert!(
+            bad.is_err(),
+            "Should not parse choice with non-variable prefix"
+        );
     }
 
     #[test]
     fn test_lambda() {
         let result = parse_expr("λ (x, y) => x");
-        assert!(matches!(result, Ok(Expr::Lam(_, _))));
+        assert!(matches!(result, Ok(Expr::Lam(_, _, _))));
 
         let result = parse_expr("\\(x) => x");
-        assert!(matches!(result, Ok(Expr::Lam(_, _))));
+        assert!(matches!(result, Ok(Expr::Lam(_, _, _))));
 
         let result = parse_expr("fun (x) => x");
-        assert!(matches!(result, Ok(Expr::Lam(_, _))));
+        assert!(matches!(result, Ok(Expr::Lam(_, _, _))));
 
         let result = parse_expr("λ () => 42");
-        assert!(matches!(result, Ok(Expr::Lam(_, _))));
+        assert!(matches!(result, Ok(Expr::Lam(_, _, _))));
     }
 
     #[test]
     fn test_application() {
         let result = parse_expr("f(x, y)");
-        assert!(matches!(result, Ok(Expr::App(_, _))));
+        assert!(matches!(result, Ok(Expr::App(_, _, _))));
     }
 
     #[test]
     fn test_if() {
         let result = parse_expr("if true then 1 else 2");
-        assert!(matches!(result, Ok(Expr::If(_, _, _))));
+        assert!(matches!(result, Ok(Expr::If(_, _, _, _))));
     }
 
     #[test]
     fn test_let() {
         let result = parse_expr("let x = 1 in x");
-        assert!(matches!(result, Ok(Expr::Let(_, _, _))));
+        assert!(matches!(result, Ok(Expr::Let(_, _, _, _))));
 
         let result = parse_expr("let rec f = λ (x) => f(x) in f");
-        assert!(matches!(result, Ok(Expr::LetRec(_, _, _))));
+        assert!(matches!(result, Ok(Expr::LetRec(_, _, _, _))));
 
         let result = parse_expr("let x = 1; x");
-        assert!(matches!(result, Ok(Expr::Let(_, _, _))));
+        assert!(matches!(result, Ok(Expr::Let(_, _, _, _))));
 
         let result = parse_expr("let rec f = λ (x) => f(x); f");
-        assert!(matches!(result, Ok(Expr::LetRec(_, _, _))));
+        assert!(matches!(result, Ok(Expr::LetRec(_, _, _, _))));
     }
 
     #[test]
@@ -931,13 +1150,13 @@ mod tests {
     #[test]
     fn test_assume_statements() {
         let result = parse_expr("assume concat: (String, String) => String; 42");
-        assert!(matches!(result, Ok(Expr::Assume(_, _, _))));
+        assert!(matches!(result, Ok(Expr::Assume(_, _, _, _))));
 
         let result = parse_expr("assume max: (Int, Int) => Int; 42");
-        assert!(matches!(result, Ok(Expr::Assume(_, _, _))));
+        assert!(matches!(result, Ok(Expr::Assume(_, _, _, _))));
 
         let result = parse_expr("assume unitToString: () => String; 42");
-        assert!(matches!(result, Ok(Expr::Assume(_, _, _))));
+        assert!(matches!(result, Ok(Expr::Assume(_, _, _, _))));
     }
 
     #[test]
@@ -951,9 +1170,9 @@ mod tests {
 
         let result = parse_expr(input);
         match result {
-            Ok(Expr::Assume(_, _, box_inner)) => match *box_inner {
-                Expr::Assume(_, _, box_inner1) => match *box_inner1 {
-                    Expr::Let(_, _, _) => {}
+            Ok(Expr::Assume(_, _, box_inner, _)) => match *box_inner {
+                Expr::Assume(_, _, box_inner1, _) => match *box_inner1 {
+                    Expr::Let(_, _, _, _) => {}
                     _ => assert!(false, "Expected a Let expression"),
                 },
                 _ => assert!(false, "Expected an Assume expression"),
@@ -967,8 +1186,8 @@ mod tests {
         // Test simple chained application
         let result = parse_expr("f(1)(2)");
         assert!(result.is_ok());
-        if let Ok(Expr::App(box_expr, args)) = result {
-            assert!(matches!(*box_expr, Expr::App(_, _))); // f(1)
+        if let Ok(Expr::App(box_expr, args, _)) = result {
+            assert!(matches!(*box_expr, Expr::App(_, _, _))); // f(1)
             assert_eq!(args.len(), 1); // (2)
         }
 
@@ -1002,30 +1221,30 @@ mod tests {
         // Test single parameter without parentheses
         let result = parse_expr("λ x => x");
         assert!(
-            matches!(result, Ok(Expr::Lam(params, _)) if params.len() == 1 && params[0] == "x")
+            matches!(result, Ok(Expr::Lam(params, _, _)) if params.len() == 1 && params[0] == "x")
         );
 
         let result = parse_expr("\\y => y");
         assert!(
-            matches!(result, Ok(Expr::Lam(params, _)) if params.len() == 1 && params[0] == "y")
+            matches!(result, Ok(Expr::Lam(params, _, _)) if params.len() == 1 && params[0] == "y")
         );
 
         let result = parse_expr("fun z => z");
         assert!(
-            matches!(result, Ok(Expr::Lam(params, _)) if params.len() == 1 && params[0] == "z")
+            matches!(result, Ok(Expr::Lam(params, _, _)) if params.len() == 1 && params[0] == "z")
         );
 
         // Test that parentheses still work
         let result = parse_expr("λ (x) => x");
         assert!(
-            matches!(result, Ok(Expr::Lam(params, _)) if params.len() == 1 && params[0] == "x")
+            matches!(result, Ok(Expr::Lam(params, _, _)) if params.len() == 1 && params[0] == "x")
         );
 
         let result = parse_expr("λ (x, y) => x");
-        assert!(matches!(result, Ok(Expr::Lam(params, _)) if params.len() == 2));
+        assert!(matches!(result, Ok(Expr::Lam(params, _, _)) if params.len() == 2));
 
         let result = parse_expr("λ () => 42");
-        assert!(matches!(result, Ok(Expr::Lam(params, _)) if params.is_empty()));
+        assert!(matches!(result, Ok(Expr::Lam(params, _, _)) if params.is_empty()));
 
         // Test nested lambdas with mixed syntax
         let result = parse_expr("λ x => λ (y, z) => x");
@@ -1112,11 +1331,11 @@ mod tests {
 
         // Ensure variables still work
         let result = parse_expr("x");
-        assert!(matches!(result, Ok(Expr::Var(_))));
+        assert!(matches!(result, Ok(Expr::Var(_, _))));
 
         // Ensure that function application still works
         let result = parse_expr("f(x)");
-        assert!(matches!(result, Ok(Expr::App(_, _))));
+        assert!(matches!(result, Ok(Expr::App(_, _, _))));
 
         // Test precedence: function type should bind less tightly than application
         let result = parse_expr("assume f: Int => String; f(42)");
@@ -1206,19 +1425,19 @@ mod tests {
     fn test_line_comments() {
         // Basic line comment
         let result = parse_expr("42 // this is a comment");
-        assert!(matches!(result, Ok(Expr::LitInt(42))));
+        assert!(matches!(result, Ok(Expr::LitInt(42, _))));
 
         // Comment at the beginning
         let result = parse_expr("// comment\n42");
-        assert!(matches!(result, Ok(Expr::LitInt(42))));
+        assert!(matches!(result, Ok(Expr::LitInt(42, _))));
 
         // Comment in expressions
         let result = parse_expr("let x = 42 // assign\nin x // use");
-        assert!(matches!(result, Ok(Expr::Let(_, _, _))));
+        assert!(matches!(result, Ok(Expr::Let(_, _, _, _))));
 
         // Comment without newline at end
         let result = parse_expr("42 // comment");
-        assert!(matches!(result, Ok(Expr::LitInt(42))));
+        assert!(matches!(result, Ok(Expr::LitInt(42, _))));
 
         // Comments in complex expressions
         let result = parse_expr(
@@ -1229,5 +1448,31 @@ mod tests {
         "#,
         );
         assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_assume_over() {
+        let input = "assume nums = a<\"\", 0, 0.0>; nums";
+        let result = parse_expr(input);
+        println!("Result: {:?}", result);
+        assert!(result.is_ok());
+        let expr = result.unwrap();
+        match expr {
+            Expr::AssumeOver(name, over_expr, body, _) => {
+                assert_eq!(name, "nums");
+                match *over_expr {
+                    Expr::Over(cvar, exprs, _) => {
+                        assert_eq!(cvar, "a");
+                        assert_eq!(exprs.len(), 3);
+                    }
+                    _ => panic!("Expected Over expression"),
+                }
+                match *body {
+                    Expr::Var(var, _) => assert_eq!(var, "nums"),
+                    _ => panic!("Expected Var(nums)"),
+                }
+            }
+            _ => panic!("Expected AssumeOver"),
+        }
     }
 }

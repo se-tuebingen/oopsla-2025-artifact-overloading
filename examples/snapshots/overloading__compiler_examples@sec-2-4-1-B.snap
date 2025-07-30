@@ -6,6 +6,7 @@ input_file: examples/sec-2-4-1-B.over
 {
   "status": "success",
   "expression": "assume addInt: (Int, Int) => Int\nlet exampleB = a‹addInt(\"\", 0), 42›\nexampleB",
+  "dimension_spans": "[spans]",
   "inferred_type": "over_a_0",
   "worlds": {
     "type": "one"

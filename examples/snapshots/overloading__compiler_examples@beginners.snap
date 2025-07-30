@@ -6,6 +6,7 @@ input_file: examples/beginners.over
 {
   "status": "success",
   "expression": "assume curryIntString: (Int) => (String) => Int\nassume curryIntInt: (Int) => (Int) => Int\nlet f = a‹curryIntString, curryIntInt›(5)\nf(50)",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_2",
   "worlds": {
     "type": "one"

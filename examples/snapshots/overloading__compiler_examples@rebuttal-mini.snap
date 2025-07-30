@@ -6,6 +6,7 @@ input_file: examples/rebuttal-mini.over
 {
   "status": "success",
   "expression": "assume fStr: (String) => Int\nassume fInt: (Int) => Int\nassume callStr: ∀(R ). ((String) => R) => R\nassume callInt: ∀(R ). ((Int) => R) => R\nassume compose: ∀(R ). ((R) => R, (R) => R) => (R) => R\ncall‹callInt, callStr›(\n  compose(compose(a‹fInt, fStr›, b‹fInt, fStr›), c‹fInt, fStr›)\n)",
+  "dimension_spans": "[spans]",
   "inferred_type": "app_10",
   "worlds": {
     "type": "one"

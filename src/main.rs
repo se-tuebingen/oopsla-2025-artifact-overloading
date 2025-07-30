@@ -12,6 +12,10 @@ struct Args {
     /// Use short output format
     #[arg(short, long)]
     short: bool,
+
+    /// Maximum number of solutions to output
+    #[arg(long, default_value_t = 1 << 16)]
+    max_solutions: usize,
 }
 
 /// Main entry point for the native CLI.
@@ -21,7 +25,7 @@ fn main() {
     let content = std::fs::read_to_string(&args.filename).expect("Failed to read file");
     match parse_expr(&content) {
         Ok(expr) => {
-            println!("{}", compile_expr(&expr, args.short));
+            println!("{}", compile_expr(&expr, args.short, args.max_solutions));
         }
         Err(err) => {
             panic!("Failed to parse expression: {}", err);
@@ -38,7 +42,7 @@ fn test_compiler_examples() {
     glob!("../", "examples/*.over", |path| {
         let input = std::fs::read_to_string(path).unwrap();
         let output = match parse_expr(&input) {
-            Ok(expr) => overloading::compile_expr_json(&expr, true),
+            Ok(expr) => overloading::compile_expr_json(&expr, true, 1 << 16),
             Err(err) => overloading::json::JsonProcessingResult::InferenceError {
                 expression: input,
                 error: err,
@@ -52,7 +56,7 @@ fn test_compiler_examples() {
             snapshot_suffix => filename,
             sort_maps => true,
         }, {
-            assert_json_snapshot!(output);
+            assert_json_snapshot!(output, { ".dimension_spans" => "[spans]" });
         });
     });
 }
