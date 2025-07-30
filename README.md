@@ -204,7 +204,7 @@ The output of the benchmark is located in `results_scale.{csv, md}`. We recommen
 
 Finally, the `bench-scale-plot.py` script is ran in order to produce a plot similar to the one in the paper in Figure 9, saved to in `results_scale.png`.
 
-The Markdown version results for the full default run (plain `nix run .#scale-benchmark`) is, as reported in the paper, available in [data/results_scale_default.md](./data/results_scale_default.md). Similarly for the plots, available in [data/results_scale_default.png](./data/results_scale_default.png)
+The CSV version results for the full default run (plain `nix run .#scale-benchmark`) is, as reported in the paper, available in [data/results_scale_default.csv](./data/results_scale_default.csv). Similarly for the plots, available in [data/results_scale_default.png](./data/results_scale_default.png)
 
 ## Reusability Guide
 
