@@ -71,40 +71,6 @@ jobs:
           nix build .#wasm
           echo "WASM build completed successfully"
 
-      - name: "Running scaling benchmarks..."
-        run: |
-          echo "Running perf benchmarks on N=M=10..."
-          nix run .#scale-benchmark -- --n-values 10 --m-values 10
-          
-      - name: "Displaying benchmark results..."
-        run: |
-          echo "=== Benchmark Results ==="
-          if [ -f "results_scale.md" ]; then
-            cat results_scale.md
-          else
-            echo "Warning: results_scale.md not found"
-            echo "Available files:"
-            ls -la
-            exit 1
-          fi
-
-          # - name: "Running perf benchmarks..."
-          #   run: |
-          #     echo "Running perf benchmarks..."
-          #     nix run .#perf-benchmark
-          #     
-          # - name: "Displaying benchmark results..."
-          #   run: |
-          #     echo "=== Benchmark Results ==="
-          #     if [ -f "results_perf.md" ]; then
-          #       cat results_perf.md
-          #     else
-          #       echo "Warning: results_perf.md not found"
-          #       echo "Available files:"
-          #       ls -la
-          #       exit 1
-          #     fi
-
       # Upload WASM build artifact for Pages deployment (only from Ubuntu to avoid duplication)
       - name: "Upload WASM build for Pages..."
         if: matrix.os == 'ubuntu-latest'
