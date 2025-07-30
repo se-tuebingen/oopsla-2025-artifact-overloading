@@ -1,4 +1,4 @@
-use crate::syntax::{Choices, CVariable, Expr};
+use crate::syntax::{CVariable, Choices, Expr};
 use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet};
 
 pub struct Renamer {
@@ -29,7 +29,10 @@ impl Renamer {
     }
 
     /// Main entry point to `Renamer`: rename an expression by collecting choices and assigning fresh names
-    pub fn rename_and_gather(mut self, expr: Expr) -> Result<(Expr, Choices, HashMap<crate::syntax::Span, CVariable>), String> {
+    pub fn rename_and_gather(
+        mut self,
+        expr: Expr,
+    ) -> Result<(Expr, Choices, HashMap<crate::syntax::Span, CVariable>), String> {
         // 1. collect all existing names to avoid conflicts
         self.collect_all_names(&expr);
 
@@ -90,7 +93,10 @@ impl Renamer {
                     self.collect_all_names(expr);
                 }
             }
-            Expr::LitInt(_, _) | Expr::LitBool(_, _) | Expr::LitString(_, _) | Expr::LitDouble(_, _) => {
+            Expr::LitInt(_, _)
+            | Expr::LitBool(_, _)
+            | Expr::LitString(_, _)
+            | Expr::LitDouble(_, _) => {
                 // Literals don't contain names
             }
         }
@@ -144,7 +150,9 @@ impl Renamer {
                     .unwrap_or_else(|| Expr::Var(name, span)) // Use assumption if available, otherwise keep the variable
             }
 
-            Expr::Lam(params, body, span) => Expr::Lam(params, Box::new(self.rename_expr(*body)), span),
+            Expr::Lam(params, body, span) => {
+                Expr::Lam(params, Box::new(self.rename_expr(*body)), span)
+            }
 
             Expr::App(func, args, span) => {
                 let renamed_func = self.rename_boxed(*func);
@@ -218,7 +226,11 @@ mod tests {
         let renamer = Renamer::new();
 
         // Test expression: <1, 2> (anonymous choice variable)
-        let expr = Expr::Over("".to_string(), vec![Expr::LitInt(1, Span::zero()), Expr::LitInt(2, Span::zero())], Span::zero());
+        let expr = Expr::Over(
+            "".to_string(),
+            vec![Expr::LitInt(1, Span::zero()), Expr::LitInt(2, Span::zero())],
+            Span::zero(),
+        );
 
         let (renamed_expr, choices, _) = renamer.rename_and_gather(expr).unwrap();
 
@@ -241,7 +253,11 @@ mod tests {
         let renamer = Renamer::new();
 
         // Test expression: x<1, 2> (named choice variable)
-        let expr = Expr::Over("x".to_string(), vec![Expr::LitInt(1, Span::zero()), Expr::LitInt(2, Span::zero())], Span::zero());
+        let expr = Expr::Over(
+            "x".to_string(),
+            vec![Expr::LitInt(1, Span::zero()), Expr::LitInt(2, Span::zero())],
+            Span::zero(),
+        );
 
         let (renamed_expr, choices, _) = renamer.rename_and_gather(expr).unwrap();
 
@@ -269,11 +285,15 @@ mod tests {
                 Expr::LitInt(1, Span::zero()),
                 Expr::Over(
                     "".to_string(),
-                    vec![Expr::LitInt(2, Span::zero()), Expr::LitInt(3, Span::zero()), Expr::LitBool(true, Span::zero())],
-                    Span::zero()
+                    vec![
+                        Expr::LitInt(2, Span::zero()),
+                        Expr::LitInt(3, Span::zero()),
+                        Expr::LitBool(true, Span::zero()),
+                    ],
+                    Span::zero(),
                 ),
             ],
-            Span::zero()
+            Span::zero(),
         );
 
         let (renamed_expr, choices, _) = renamer.rename_and_gather(expr).unwrap();
@@ -309,9 +329,9 @@ mod tests {
             Box::new(Expr::Over(
                 "".to_string(),
                 vec![Expr::LitInt(1, Span::zero()), Expr::LitInt(2, Span::zero())],
-                Span::zero()
+                Span::zero(),
             )),
-            Span::zero()
+            Span::zero(),
         );
 
         let (renamed_expr, choices, _) = renamer.rename_and_gather(expr).unwrap();
@@ -355,13 +375,16 @@ mod tests {
         // Test expression: assume x = 42 in add(x, 1)
         let expr = Expr::AssumeOver(
             "x".to_string(),
-            Box::new(Expr::LitInt(42,  Span::zero())),
+            Box::new(Expr::LitInt(42, Span::zero())),
             Box::new(Expr::App(
-                Box::new(Expr::Var("add".to_string(),  Span::zero())),
-                vec![Expr::Var("x".to_string(), Span::zero()), Expr::LitInt(1, Span::zero())],
-                Span::zero()
+                Box::new(Expr::Var("add".to_string(), Span::zero())),
+                vec![
+                    Expr::Var("x".to_string(), Span::zero()),
+                    Expr::LitInt(1, Span::zero()),
+                ],
+                Span::zero(),
             )),
-            Span::zero()
+            Span::zero(),
         );
         let (renamed_expr, choices, _) = renamer.rename_and_gather(expr).unwrap();
         match renamed_expr {
@@ -387,24 +410,24 @@ mod tests {
             Box::new(Expr::Over(
                 "".to_string(),
                 vec![
-                    Expr::Var("addInt".to_string(),  Span::zero()),
-                    Expr::Var("addStr".to_string(),  Span::zero()),
+                    Expr::Var("addInt".to_string(), Span::zero()),
+                    Expr::Var("addStr".to_string(), Span::zero()),
                 ],
-                Span::zero()
+                Span::zero(),
             )),
             Box::new(Expr::App(
-                Box::new(Expr::Var("a".to_string(),  Span::zero())),
+                Box::new(Expr::Var("a".to_string(), Span::zero())),
                 vec![
                     Expr::App(
-                        Box::new(Expr::Var("a".to_string(),  Span::zero())),
-                        vec![Expr::LitInt(1,  Span::zero()), Expr::LitInt(2,  Span::zero())],
-                        Span::zero()
+                        Box::new(Expr::Var("a".to_string(), Span::zero())),
+                        vec![Expr::LitInt(1, Span::zero()), Expr::LitInt(2, Span::zero())],
+                        Span::zero(),
                     ),
                     Expr::LitInt(3, Span::zero()),
                 ],
-                Span::zero()
+                Span::zero(),
             )),
-            Span::zero()
+            Span::zero(),
         );
 
         let (renamed_expr, choices, _) = renamer.rename_and_gather(expr).unwrap();
@@ -431,24 +454,24 @@ mod tests {
             Box::new(Expr::Over(
                 "a".to_string(),
                 vec![
-                    Expr::Var("addInt".to_string(),  Span::zero()),
-                    Expr::Var("addStr".to_string(),  Span::zero()),
+                    Expr::Var("addInt".to_string(), Span::zero()),
+                    Expr::Var("addStr".to_string(), Span::zero()),
                 ],
-                Span::zero()
+                Span::zero(),
             )),
             Box::new(Expr::App(
-                Box::new(Expr::Var("a".to_string(),  Span::zero())),
+                Box::new(Expr::Var("a".to_string(), Span::zero())),
                 vec![
                     Expr::App(
-                        Box::new(Expr::Var("a".to_string(),  Span::zero())),
-                        vec![Expr::LitInt(1,  Span::zero()), Expr::LitInt(2,  Span::zero())],
-                        Span::zero()
+                        Box::new(Expr::Var("a".to_string(), Span::zero())),
+                        vec![Expr::LitInt(1, Span::zero()), Expr::LitInt(2, Span::zero())],
+                        Span::zero(),
                     ),
                     Expr::LitInt(3, Span::zero()),
                 ],
-                Span::zero()
+                Span::zero(),
             )),
-            Span::zero()
+            Span::zero(),
         );
 
         let (renamed_expr, choices, _) = renamer.rename_and_gather(expr).unwrap();

@@ -3,7 +3,7 @@ use rustc_hash::FxHashMap as HashMap;
 #[macro_use]
 pub mod syntax;
 use crate::json::JsonProcessingResult;
-use crate::syntax::{Choices, Expr, TVariable, CVariable, Type, Span, pretty_choices};
+use crate::syntax::{CVariable, Choices, Expr, Span, TVariable, Type, pretty_choices};
 
 pub mod rename;
 use crate::rename::Renamer;
@@ -25,19 +25,19 @@ use wasm_bindgen::prelude::*;
 /// The main runner of the compiler.
 /// It processes the expression, gathers constraints, solves them, and performs overload resolution.
 fn process_expr(expr: &Expr, get_all_solutions: bool, max_solutions: usize) -> ProcessingResult {
-    let (renamed_expr, choices, new_dimension_spans) = time_it!("Renaming and gathering choices", {
-        let renamer = Renamer::new();
-        match renamer.rename_and_gather(expr.clone()) {
-            Ok((expr, choices, new_dimension_spans)) =>
-                (expr, choices, new_dimension_spans),
-            Err(err) => {
-                return ProcessingResult::InferenceError(
-                    expr.clone(),
-                    format!("Failed to rename: {}", err),
-                );
+    let (renamed_expr, choices, new_dimension_spans) =
+        time_it!("Renaming and gathering choices", {
+            let renamer = Renamer::new();
+            match renamer.rename_and_gather(expr.clone()) {
+                Ok((expr, choices, new_dimension_spans)) => (expr, choices, new_dimension_spans),
+                Err(err) => {
+                    return ProcessingResult::InferenceError(
+                        expr.clone(),
+                        format!("Failed to rename: {}", err),
+                    );
+                }
             }
-        }
-    });
+        });
 
     let mut ctx = InferenceContext::new();
 
@@ -163,7 +163,11 @@ fn pretty_result(
                     output.push_str("Solutions:\n");
                     if let Worlds::Many(k) = worlds {
                         if solutions.len() < *k as usize {
-                            output.push_str(&format!("  (truncated to first {} solutions, but {} exist in total)\n", solutions.len(), k));
+                            output.push_str(&format!(
+                                "  (truncated to first {} solutions, but {} exist in total)\n",
+                                solutions.len(),
+                                k
+                            ));
                         }
                     }
                     for solution in solutions {
@@ -331,10 +335,23 @@ pub mod json {
                 expression: expr.pretty_print(80),
                 error: error.clone(),
             },
-            ProcessingResult::AllOK(expr, dimension_spans, tpe, constraints, bounds, errors, worlds, solutions) => {
-                let json_dimension_spans: Vec<JsonDimensionSpan> =
-
-                    dimension_spans.iter().map(|(span, var)| JsonDimensionSpan { span: *span, variable: var.clone() }).collect();
+            ProcessingResult::AllOK(
+                expr,
+                dimension_spans,
+                tpe,
+                constraints,
+                bounds,
+                errors,
+                worlds,
+                solutions,
+            ) => {
+                let json_dimension_spans: Vec<JsonDimensionSpan> = dimension_spans
+                    .iter()
+                    .map(|(span, var)| JsonDimensionSpan {
+                        span: *span,
+                        variable: var.clone(),
+                    })
+                    .collect();
 
                 let json_constraints: Vec<JsonConstraint> =
                     constraints.iter().map(JsonConstraint::from).collect();
@@ -406,7 +423,11 @@ pub mod json {
 }
 
 // Convenience function similar to compile_expr
-pub fn compile_expr_json_string(expr: &Expr, include_solutions: bool, max_solutions: usize) -> String {
+pub fn compile_expr_json_string(
+    expr: &Expr,
+    include_solutions: bool,
+    max_solutions: usize,
+) -> String {
     let json = compile_expr_json(expr, include_solutions, max_solutions);
     match serde_json::to_string_pretty(&json) {
         Ok(json) => json,
@@ -414,7 +435,11 @@ pub fn compile_expr_json_string(expr: &Expr, include_solutions: bool, max_soluti
     }
 }
 
-pub fn compile_expr_json(expr: &Expr, include_solutions: bool, max_solutions: usize) -> JsonProcessingResult {
+pub fn compile_expr_json(
+    expr: &Expr,
+    include_solutions: bool,
+    max_solutions: usize,
+) -> JsonProcessingResult {
     let result = process_expr(expr, include_solutions, max_solutions);
 
     json::json_result(&result, include_solutions)
@@ -433,8 +458,10 @@ pub fn wasm_parse_and_test(input: &str, print_solutions: bool) -> String {
     console_error_panic_hook::set_once();
 
     match crate::syntax::parse_expr(input) {
-        Ok(expr) => std::panic::catch_unwind(|| compile_expr_json_string(&expr, print_solutions, 1 << 10))
-            .unwrap_or_else(|_| make_json_error("Panic during compilation".to_string())),
+        Ok(expr) => {
+            std::panic::catch_unwind(|| compile_expr_json_string(&expr, print_solutions, 1 << 10))
+                .unwrap_or_else(|_| make_json_error("Panic during compilation".to_string()))
+        }
         Err(err) => {
             console_error!("Parse failed: {}", err);
             make_json_error(err.replace("<", "&lt;").replace(">", "&gt;"))

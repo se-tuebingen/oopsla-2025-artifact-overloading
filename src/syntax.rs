@@ -47,8 +47,7 @@ macro_rules! time_it {
 ///////////////////////////////////////////////////////////////
 
 // Position and span information
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[derive(serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Deserialize, serde::Serialize)]
 pub struct Position {
     pub offset: usize,
     pub line: u32,
@@ -57,16 +56,23 @@ pub struct Position {
 
 impl Position {
     pub fn new(offset: usize, line: u32, column: u32) -> Self {
-        Self { offset, line, column }
+        Self {
+            offset,
+            line,
+            column,
+        }
     }
 
     pub fn zero() -> Self {
-        Self { offset: 0, line: 1, column: 1 }
+        Self {
+            offset: 0,
+            line: 1,
+            column: 1,
+        }
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[derive(serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Deserialize, serde::Serialize)]
 pub struct Span {
     pub start: Position,
     pub end: Position,
@@ -78,7 +84,10 @@ impl Span {
     }
 
     pub fn zero() -> Self {
-        Self { start: Position::zero(), end: Position::zero() }
+        Self {
+            start: Position::zero(),
+            end: Position::zero(),
+        }
     }
 
     pub fn extend(&self, other: Span) -> Span {
@@ -98,7 +107,11 @@ impl std::fmt::Display for Position {
 impl std::fmt::Display for Span {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if self.start.line == self.end.line {
-            write!(f, "{}:{}-{}", self.start.line, self.start.column, self.end.column)
+            write!(
+                f,
+                "{}:{}-{}",
+                self.start.line, self.start.column, self.end.column
+            )
         } else {
             write!(f, "{}-{}", self.start, self.end)
         }
@@ -267,8 +280,6 @@ impl Expr {
         }
         self
     }
-
-
 }
 
 use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet};
@@ -349,12 +360,10 @@ impl Expr {
                 .append(RcDoc::hardline())
                 .append(body.to_doc()),
 
-            Expr::AssumeOver(name, over, body, _) => {
-                RcDoc::text(format!("assume {} = ", name))
-                    .append(over.to_doc())
-                    .append(RcDoc::hardline())
-                    .append(body.to_doc())
-            }
+            Expr::AssumeOver(name, over, body, _) => RcDoc::text(format!("assume {} = ", name))
+                .append(over.to_doc())
+                .append(RcDoc::hardline())
+                .append(body.to_doc()),
 
             Expr::If(cond, thn, els, _) => RcDoc::group(
                 RcDoc::text("if ")
@@ -530,7 +539,7 @@ impl Type {
 /// Parser submodule for expressions and types.
 /// Use `parse_expr` defined in the super-module to parse expressions.
 mod parser {
-    use super::{Expr, Type, Position};
+    use super::{Expr, Position, Type};
     use nom::{
         IResult,
         branch::alt,
@@ -682,9 +691,7 @@ mod parser {
 
     // Base type: Int, String, Bool, Double, etc.
     fn base_type(input: Span) -> IResult<Span, Type> {
-        map(spanned(ws(identifier)), |(name, _span)| {
-            Type::TBase(name)
-        })(input)
+        map(spanned(ws(identifier)), |(name, _span)| Type::TBase(name))(input)
     }
 
     // Main expression parser
@@ -795,9 +802,7 @@ mod parser {
                         expr_parser_span,
                     ))),
                 ))),
-                |((_, (typ, _, expr)), span)| {
-                    Expr::Assume(name.clone(), typ, Box::new(expr), span)
-                },
+                |((_, (typ, _, expr)), span)| Expr::Assume(name.clone(), typ, Box::new(expr), span),
             ),
             // assume NAME = OVER - commit after seeing '='
             map(
@@ -856,19 +861,13 @@ mod parser {
 
             match app_result {
                 Ok((remaining, Some(args))) if !args.is_empty() => {
-                    let span = to_span(
-                        Span::new_extra(input.fragment(), input.extra),
-                        remaining,
-                    );
+                    let span = to_span(Span::new_extra(input.fragment(), input.extra), remaining);
                     expr = Expr::App(Box::new(expr), args, span);
                     input = remaining;
                 }
                 Ok((remaining, Some(_))) => {
                     // Empty args case - treat as unit application
-                    let span = to_span(
-                        Span::new_extra(input.fragment(), input.extra),
-                        remaining,
-                    );
+                    let span = to_span(Span::new_extra(input.fragment(), input.extra), remaining);
                     expr = Expr::App(Box::new(expr), vec![], span);
                     input = remaining;
                 }
@@ -913,7 +912,9 @@ mod parser {
 
     // Variable
     fn var_expr(input: Span) -> IResult<Span, Expr> {
-        map(spanned(ws(identifier)), |(name, span)| Expr::Var(name, span))(input)
+        map(spanned(ws(identifier)), |(name, span)| {
+            Expr::Var(name, span)
+        })(input)
     }
 
     // Literals
@@ -988,7 +989,10 @@ mod tests {
         assert!(matches!(parse_expr("3.41"), Ok(Expr::LitDouble(3.41, _))));
         assert!(matches!(parse_expr("-3.41"), Ok(Expr::LitDouble(-3.41, _))));
         assert!(matches!(parse_expr("0.001"), Ok(Expr::LitDouble(0.001, _))));
-        assert!(matches!(parse_expr("-0.001"), Ok(Expr::LitDouble(-0.001, _))));
+        assert!(matches!(
+            parse_expr("-0.001"),
+            Ok(Expr::LitDouble(-0.001, _))
+        ));
         assert!(matches!(parse_expr("0.0"), Ok(Expr::LitDouble(0.0, _))));
         assert!(matches!(parse_expr("-0.0"), Ok(Expr::LitDouble(-0.0, _))));
         assert!(matches!(parse_expr("0"), Ok(Expr::LitInt(0, _))));

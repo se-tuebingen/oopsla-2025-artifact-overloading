@@ -277,7 +277,12 @@ pub fn count_worlds(
 }
 
 /// Extract all valid solutions from the BDD, maintaining consistent ordering
-pub fn solutions(bdd: &Bdd, _varset: &BddVariableSet, mapping: &BddMapping, maximum: usize) -> Vec<Choices> {
+pub fn solutions(
+    bdd: &Bdd,
+    _varset: &BddVariableSet,
+    mapping: &BddMapping,
+    maximum: usize,
+) -> Vec<Choices> {
     // NOTE: We could also use `sat_clauses()` here for better performance,
     // but then we'd have to handle the partial valuations manually ourselves,
     // since the clauses are only like `a_bit0 := whatever, a_bit1 := true`,

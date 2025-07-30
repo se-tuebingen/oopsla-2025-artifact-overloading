@@ -1,7 +1,7 @@
 use rustc_hash::{FxHashMap as HashMap, FxHashSet as HashSet};
 use std::fmt;
 
-use crate::syntax::{meet, pretty_choices, CVariable, Choices, Expr, TVariable, Type, Variable};
+use crate::syntax::{CVariable, Choices, Expr, TVariable, Type, Variable, meet, pretty_choices};
 
 // Predefined types
 fn t_bool() -> Type {
@@ -647,14 +647,14 @@ mod infer_tests {
             Box::new(Expr::Lam(
                 vec!["x".to_string()],
                 Box::new(Expr::Var("x".to_string(), Span::zero())),
-                Span::zero()
+                Span::zero(),
             )),
             Box::new(Expr::App(
                 Box::new(Expr::Var("id".to_string(), Span::zero())),
                 vec![Expr::LitInt(42, Span::zero())],
-                Span::zero()
+                Span::zero(),
             )),
-            Span::zero()
+            Span::zero(),
         );
 
         let (result_type, constraints) = ctx.infer(&expr).expect("Inference failed");
