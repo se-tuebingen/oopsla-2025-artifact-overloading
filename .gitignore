@@ -4,3 +4,5 @@ result
 result/
 target/
 pkg/
+.DS_Store
+dist/
