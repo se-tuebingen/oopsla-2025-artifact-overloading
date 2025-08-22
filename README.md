@@ -1,6 +1,8 @@
 # Artifact of the paper 'The Simple Essence of Overloading'
 
-> **Availability:** This artifact is available via Zenodo
+> **Availability:** This artifact is available via Zenodo:
+
+[![DOI](https://zenodo.org/badge/1009637544.svg)](https://doi.org/10.5281/zenodo.16928380)
 
 This GitHub repository contains the artifact of the paper:
 
@@ -8,6 +10,8 @@ This GitHub repository contains the artifact of the paper:
 > Jiří Beneš and Jonathan Immanuel Brachthäuser.
 > Accepted at OOPSLA 2025.
 > DOI: https://doi.org/10.1145/3763168
+
+The Web UI / Playground is also hosted via GitHub Pages: <https://se-tuebingen.github.io/oopsla-2025-artifact-overloading/>.
 
 ## Overview
 
