@@ -1,0 +1,24 @@
+title: Artifact of the OOPSLA 2025 paper 'The Simple Essence of Overloading'
+abstract: Artifact of the OOPSLA 2025 paper 'The Simple Essence of Overloading'
+type: software
+authors:
+  - given-names: Jiří
+    family-names: Beneš
+    email: jiri.benes@uni-tuebingen.de
+    affiliation: University of Tübingen
+    orcid: 'https://orcid.org/0009-0002-1501-4870'
+  - given-names: Jonathan Immanuel
+    family-names: Brachthäuser
+    email: jonathan.brachthaeuser@uni-tuebingen.de
+    affiliation: University of Tübingen
+    orcid: 'https://orcid.org/0000-0001-9128-0391'
+identifiers:
+  - type: doi
+    value: 10.1145/3763168
+    description: OOPSLA 2025 paper 'The Simple Essence of Overloading'
+repository-code: https://github.com/se-tuebingen/oopsla-2025-artifact-overloading
+license:
+  - Apache-2.0
+  - MIT
+date-released: '2025-08-22'
+version: 1.0.0

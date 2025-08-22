@@ -1,11 +1,13 @@
 # Artifact of the paper 'The Simple Essence of Overloading'
 
-> **Availability:** We will make our artifact available via Zenodo.
+> **Availability:** This artifact is available via Zenodo
 
 This GitHub repository contains the artifact of the paper:
 
-> The Simple Essence of Overloading:
-> Making ad-hoc polymorphism more algebraic with flow-based variational type-checking
+> The Simple Essence of Overloading: Making Ad-Hoc Polymorphism More Algebraic with Flow-Based Variational Type-Checking.
+> Jiří Beneš and Jonathan Immanuel Brachthäuser.
+> Accepted at OOPSLA 2025.
+> DOI: https://doi.org/10.1145/3763168
 
 ## Overview
 
